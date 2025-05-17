@@ -46,6 +46,8 @@ class SerieControllerApi extends Controller
             "prev_page_url" => $series->previousPageUrl(),
             "status" => 200
         ];
+
+        //prueba git
     }
 
     return response()->json($data, 200);
