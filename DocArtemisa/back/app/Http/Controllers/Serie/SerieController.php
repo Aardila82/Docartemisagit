@@ -14,16 +14,34 @@ class SerieController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        // Obtener todas las series (usando paginación)
-        $seriesTrd = SerieModel::latest('id')->paginate(3);
+    public function index(Request $request)
+{
+    $perPage = $request->get('per_page', 3); // valor por defecto: 3
+    $page = $request->get('page', 1);        // valor por defecto: 1
 
-        // Retornar la respuesta en formato JSON
-        return response()->json([
-            'data' => $seriesTrd,
-        ], 200); // 200 es el código HTTP para "OK"
+    $seriesTrd = SerieModel::latest('id')->paginate($perPage, ['*'], 'page', $page);
+
+    if ($seriesTrd->total() === 0) {
+        $data = [
+            'mensaje' => 'No se tienen datos',
+            'status' => 200
+        ];
+    } else {
+        $data = [
+            'data' => $seriesTrd->items(), // solo los datos de esta página
+            'current_page' => $seriesTrd->currentPage(),
+            'last_page' => $seriesTrd->lastPage(),
+            'per_page' => $seriesTrd->perPage(),
+            'total' => $seriesTrd->total(),
+            'next_page_url' => $seriesTrd->nextPageUrl(),
+            'prev_page_url' => $seriesTrd->previousPageUrl(),
+            'status' => 200
+        ];
     }
+
+    return response()->json($data, 200);
+}
+
 }
 
     /**
