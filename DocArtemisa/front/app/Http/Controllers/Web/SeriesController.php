@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Web; // Actualizado para la carpeta Web
+namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Serie\SerieModel;
@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Validator;
 
 class SeriesController extends Controller
 {
+
+    protected $serieService;
+
+    public function __construct(
+        SerieService $serieService
+    ) {
+        $this->serieService = $serieService;
+    }
 
     public function index(SerieService $serieService)
     {
@@ -29,25 +37,19 @@ class SeriesController extends Controller
             'estado_id' => 'nullable|exists:estados,id',
         ]);
 
-        // Verificar duplicados
-        $existe = SerieModel::where('codigo', $request->codigo)
-            ->where('descripcion', $request->descripcion)
-            ->where('estado_id', '!=', 2)
-            ->exists();
-
-        if ($existe) {
-            return redirect()->route('SerieWeb.index')->with('error', 'Ya existe una serie con esos datos y estado diferente de .');
-        }
-
-        SerieModel::create([
+        $data = [
             'codigo' => $request->codigo,
             'descripcion' => $request->descripcion,
             'fechainicio' => $request->fechainicio,
             'fechafin' => $request->fechafin,
             'estado_id' => $request->estado_id ?? 0,
-        ]);
+        ];
 
-        return redirect()->route('SerieWeb.index')->with('success', 'Serie creada correctamente.');
+        $response = $this->serieService->createSerie($data);
+        dd($response);
+        return redirect()->route('SerieWeb.index')
+            ->with('success', $response->status() == 201 ? true : false) // true/false
+            ->with('message', $response->getData()->data); // mensaje    
     }
 
     public function edit($id)
@@ -173,7 +175,7 @@ class SeriesController extends Controller
         $mensaje = $responseData->data->mensaje;
         $errors = empty($responseData->data->data->errors) ? [] : $responseData->data->data->errors;
 
-        return view('SerieWeb.procesomasiva', compact('errors' , 'mensaje')); 
+        return view('SerieWeb.procesomasiva', compact('errors', 'mensaje'));
     }
 
     public function cargueMasiva()

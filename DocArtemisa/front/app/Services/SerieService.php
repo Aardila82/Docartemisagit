@@ -61,7 +61,11 @@ class SerieService extends ApiService
     {
         try {
             $response = $this->post('serieAPI', $data);
-            return $this->successResponse($response->object(), 201);
+            $body = $response->object();
+            $statusCode = $body->status;
+            $mensaje = $body->mensaje;
+
+            return $this->successResponse($mensaje, $statusCode);
             
         } catch (RequestException $e) {
             return $this->handleApiError($e);

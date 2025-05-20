@@ -11,6 +11,30 @@
 
   {{-- <a href="{{ route('SerieWeb.masiva') }}" class="btn btn-warning mb-3">Masiva</a> --}}
 
+  @if(session()->has('success'))
+  <div class="alert alert-{{ session('success') ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
+    {{ session('message') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  @endif
+
+  @if(session('error'))
+  <div class="alert alert-danger">
+    {{ session('message') }}
+  </div>
+  @endif
+
+  @if($errors->any())
+  <div class="alert alert-warning">
+    <ul>
+      @foreach($errors->all() as $error)
+      <li>{{ $error }}</li>
+      @endforeach
+    </ul>
+  </div>
+  @endif
 
   @if(empty($series))
   <div class="alert alert-warning">
@@ -44,10 +68,10 @@
           @endif
 
           @if($serie->estado_id != 2)
-            <a href="#" class="text-dark" title="Eliminar"
-              onclick="confirmarEliminacion({{ $serie->id }})">
-              <i class="bi bi-trash-fill"></i>
-            </a>
+          <a href="#" class="text-dark" title="Eliminar"
+            onclick="confirmarEliminacion({{ $serie->id }})">
+            <i class="bi bi-trash-fill"></i>
+          </a>
           @endif
 
           <form id="delete-serie-{{ $serie->id }}" action="{{ route('SerieWeb.destroy', $serie->id) }}" method="POST" style="display: none;">
@@ -153,8 +177,7 @@
         }
       });
     });
-  </script>
-  <script>
+
     function confirmarEliminacion(id) {
       Swal.fire({
         title: '¿Estás seguro?',
@@ -172,4 +195,26 @@
       });
     }
   </script>
+
+  @if(session('success'))
+  <script>
+    Swal.fire({
+      icon: 'success',
+      title: 'Éxito',
+      text: "{{ session('success') }}", // Aquí se imprime el mensaje de la clave 'success'
+      confirmButtonColor: '#3085d6'
+    });
+  </script>
+  @endif
+
+  @if(session('error'))
+  <script>
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: "{{ session('error') }}", // Aquí se imprime el mensaje de la clave 'error'
+      confirmButtonColor: '#d33'
+    });
+  </script>
+  @endif
   @endsection

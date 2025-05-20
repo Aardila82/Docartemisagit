@@ -22,36 +22,36 @@ class SerieControllerApi extends Controller
     }
 
 
-   public function index(Request $request)
-{
-    $perPage = $request->get('per_page', 10); // valor por defecto: 10
-    $page = $request->get('page', 1);         // valor por defecto: 1
+    public function index(Request $request)
+    {
+        $perPage = $request->get('per_page', 10); // valor por defecto: 10
+        $page = $request->get('page', 1);         // valor por defecto: 1
 
-    // Paginación directamente en el controlador
-    $series = SerieModel::latest('id')->paginate($perPage, ['*'], 'page', $page);
+        // Paginación directamente en el controlador
+        $series = SerieModel::latest('id')->paginate($perPage, ['*'], 'page', $page);
 
-    if ($series->total() === 0) {
-        $data = [
-            "mensaje" => "No se tienen datos",
-            "status" => 200
-        ];
-    } else {
-        $data = [
-            "actas" => $series->items(), // solo los items de la página actual
-            "current_page" => $series->currentPage(),
-            "last_page" => $series->lastPage(),
-            "per_page" => $series->perPage(),
-            "total" => $series->total(),
-            "next_page_url" => $series->nextPageUrl(),
-            "prev_page_url" => $series->previousPageUrl(),
-            "status" => 200
-        ];
+        if ($series->total() === 0) {
+            $data = [
+                "mensaje" => "No se tienen datos",
+                "status" => 200
+            ];
+        } else {
+            $data = [
+                "actas" => $series->items(), // solo los items de la página actual
+                "current_page" => $series->currentPage(),
+                "last_page" => $series->lastPage(),
+                "per_page" => $series->perPage(),
+                "total" => $series->total(),
+                "next_page_url" => $series->nextPageUrl(),
+                "prev_page_url" => $series->previousPageUrl(),
+                "status" => 200
+            ];
 
-        //prueba git
+            //prueba git
+        }
+
+        return response()->json($data, 200);
     }
-
-    return response()->json($data, 200);
-}
 
     /**
      * Store a newly created resource in storage.
@@ -60,7 +60,6 @@ class SerieControllerApi extends Controller
     {
         // Validación general (estado_id ahora es opcional)
         $validator = Validator::make($request->all(), [
-            'idversion' => 'required|integer',
             'codigo' => 'required|integer',
             'descripcion' => 'required|string',
             'fechainicio' => 'required|date',
@@ -90,7 +89,7 @@ class SerieControllerApi extends Controller
 
         // Crear la nueva serie
         $serie = new SerieModel();
-        $serie->idversion = $request->idversion;
+        $serie->idversion = 0;
         $serie->codigo = $request->codigo;
         $serie->estado_id = $request->estado_id ?? 0; // Valor por defecto si no se envía
         $serie->descripcion = $request->descripcion;
