@@ -132,4 +132,55 @@ public function importFromCSV($filePath)
             ];
         }
     }
+
+    public function update(int $id, array $data): array
+{
+    // Validar los datos entrantes
+    $validator = Validator::make($data, [
+        'codigo' => 'required|integer',
+        'descripcion' => 'required|string',
+        'fechainicio' => 'required|date',
+        'fechafin' => 'required|date|after_or_equal:fechainicio',
+    ]);
+
+    if ($validator->fails()) {
+        return [
+            'success' => false,
+            'errors' => $validator->errors()->toArray()
+        ];
+    }
+
+    try {
+        // Buscar la serie por ID
+        $serie = SerieModel::findOrFail($id);
+
+        // Verificar si existe otra serie con el mismo código y descripción (evitando conflicto con sí misma)
+        $existe = SerieModel::where('id', '!=', $id)
+            ->where('codigo', $data['codigo'])
+            ->where('descripcion', $data['descripcion'])
+            ->where('estado_id', '!=', 2)
+            ->exists();
+
+        if ($existe) {
+            return [
+                'success' => false,
+                'errors' => ['conflicto' => 'Ya existe otra serie con este código y descripción']
+            ];
+        }
+
+        // Actualizar la serie
+        $serie->update($data);
+
+        return [
+            'success' => true,
+            'data' => $serie
+        ];
+
+    } catch (\Exception $e) {
+        return [
+            'success' => false,
+            'errors' => ['exception' => $e->getMessage()]
+        ];
+    }
+}
 }

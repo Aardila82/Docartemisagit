@@ -11,7 +11,8 @@ class SeriesCargueMasivaController extends Controller
     public function getAll(SeriesCargueMasivaService $seriesCargueMasivaService)
     {
         $response = $seriesCargueMasivaService->getAll();
-        $data = empty($response->getData()->data) ? [] : (object)$response->getData()->data;
+        $data = empty($response->getData()->data) ? [] : (object)$response->getData()->data->data;
+       // echo "<pre>".print_r($data , true)."</pre>";
         return view('SerieWeb.seriesCargueMasiva', compact('data'));
     }
 

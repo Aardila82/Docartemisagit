@@ -7,6 +7,7 @@ use App\Models\Serie\SerieModel;
 use Illuminate\Http\Request;
 use App\Services\SerieService;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Estado;
 
 class SeriesController extends Controller
 {
@@ -46,41 +47,54 @@ class SeriesController extends Controller
         ];
 
         $response = $this->serieService->createSerie($data);
-        dd($response);
+        //dd($response);
         return redirect()->route('SerieWeb.index')
             ->with('success', $response->status() == 201 ? true : false) // true/false
-            ->with('message', $response->getData()->data); // mensaje    
+            ->with('message', $response->getData()->data); // mensaje
     }
 
     public function edit($id)
-    {
-        $serie = SerieModel::findOrFail($id);
-        return view('SerieWeb.edit', compact('serie'));
+{
+    $serie = SerieModel::findOrFail($id);
+    $estados = Estado::all(); // Trae los estados para el select
+    return view('SerieWeb.edit', compact('serie', 'estados'));
+}
+
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'idversion' => 'required|integer',
+        'codigo' => 'required|integer',
+        'descripcion' => 'required|string',
+        'fechainicio' => 'required|date',
+        'fechafin' => 'required|date|after_or_equal:fechainicio',
+        'estado_id' => 'nullable|exists:estados,id',
+    ]);
+
+    $existe = SerieModel::where('id', '!=', $id)
+        ->where('codigo', $request->codigo)
+        ->where('descripcion', $request->descripcion)
+        ->where('estado_id', '!=', 2)
+        ->exists();
+
+    if ($existe) {
+        return redirect()->back()
+            ->withInput()
+            ->withErrors(['conflicto' => 'Ya existe otra serie con ese código y descripción.']);
     }
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'idversion' => 'required|integer',
-            'codigo' => 'required|integer',
-            'descripcion' => 'required|string',
-            'fechainicio' => 'required|date',
-            'fechafin' => 'required|date|after_or_equal:fechainicio',
-            'estado_id' => 'nullable|exists:estados,id',
-        ]);
+    $serie = SerieModel::findOrFail($id);
+    $serie->update([
+        'idversion' => $request->idversion,
+        'codigo' => $request->codigo,
+        'descripcion' => $request->descripcion,
+        'fechainicio' => $request->fechainicio,
+        'fechafin' => $request->fechafin,
+        'estado_id' => $request->estado_id ?? 0,
+    ]);
 
-        $serie = SerieModel::findOrFail($id);
-        $serie->update([
-            'idversion' => $request->idversion,
-            'codigo' => $request->codigo,
-            'descripcion' => $request->descripcion,
-            'fechainicio' => $request->fechainicio,
-            'fechafin' => $request->fechafin,
-            'estado_id' => $request->estado_id ?? 0,
-        ]);
-
-        return redirect()->route('SerieWeb.index')->with('success', 'Serie actualizada correctamente.');
-    }
+    return redirect()->route('SerieWeb.index')->with('success', 'Serie actualizada correctamente.');
+}
 
     public function destroy($id)
     {

@@ -109,63 +109,64 @@ class SerieControllerApi extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-    {
-        $serie = SerieModel::find($id);
+{
+    // Buscar la serie por ID
+    $serie = SerieModel::find($id);
 
-        if (!$serie) {
-            return response()->json([
-                'mensaje' => 'Serie no encontrada',
-                'status' => 404
-            ], 404);
-        }
-
-        // Validación (estado_id ahora es opcional)
-        $validator = Validator::make($request->all(), [
-            'idversion' => 'required|integer',
-            'codigo' => 'required|integer',
-            'descripcion' => 'required|string',
-            'fechainicio' => 'required|date',
-            'fechafin' => 'required|date|after_or_equal:fechainicio',
-            'estado_id' => 'nullable|exists:estados,id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors(),
-                'status' => 400
-            ], 400);
-        }
-
-        // Verificar si ya existe otra serie con el mismo código y descripción,
-        // estado diferente de 2, y que no sea esta misma serie
-        $existe = SerieModel::where('id', '!=', $id)
-            ->where('codigo', $request->codigo)
-            ->where('descripcion', $request->descripcion)
-            ->where('estado_id', '!=', 2)
-            ->exists();
-
-        if ($existe) {
-            return response()->json([
-                'mensaje' => 'Ya existe otra serie con ese código, descripción y estado diferente de 2.',
-                'status' => 409
-            ], 409);
-        }
-
-        // Actualizar la serie
-        $serie->idversion = $request->idversion;
-        $serie->codigo = $request->codigo;
-        $serie->estado_id = $request->estado_id ?? 0; // Por defecto 0
-        $serie->descripcion = $request->descripcion;
-        $serie->fechainicio = $request->fechainicio;
-        $serie->fechafin = $request->fechafin;
-        $serie->save();
-
+    if (!$serie) {
         return response()->json([
-            'mensaje' => 'Serie actualizada correctamente',
-            'serie' => $serie,
-            'status' => 200
-        ], 200);
+            'mensaje' => 'Serie no encontrada',
+            'status' => 404
+        ], 404);
     }
+
+    // Validar datos de entrada
+    $validator = Validator::make($request->all(), [
+        'idversion' => 'required|integer',
+        'codigo' => 'required|integer',
+        'descripcion' => 'required|string',
+        'fechainicio' => 'required|date',
+        'fechafin' => 'required|date|after_or_equal:fechainicio',
+        'estado_id' => 'nullable|exists:estados,id',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'errors' => $validator->errors(),
+            'status' => 422
+        ], 422);
+    }
+
+    // Verificar existencia de otra serie con el mismo código y descripción
+    $conflicto = SerieModel::where('id', '!=', $id)
+        ->where('codigo', $request->codigo)
+        ->where('descripcion', $request->descripcion)
+        ->where('estado_id', '!=', 2)
+        ->exists();
+
+    if ($conflicto) {
+        return response()->json([
+            'mensaje' => 'Ya existe otra serie con ese código y descripción en estado activo.',
+            'status' => 409
+        ], 409);
+    }
+
+    // Actualizar campos
+    $serie->fill([
+        'idversion' => $request->idversion,
+        'codigo' => $request->codigo,
+        'descripcion' => $request->descripcion,
+        'fechainicio' => $request->fechainicio,
+        'fechafin' => $request->fechafin,
+        'estado_id' => $request->estado_id ?? 0,
+    ])->save();
+
+    return response()->json([
+        'mensaje' => 'Serie actualizada correctamente',
+        'serie' => $serie,
+        'status' => 200
+    ], 200);
+}
 
 
     /**

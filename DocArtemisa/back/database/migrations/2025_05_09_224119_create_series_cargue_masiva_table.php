@@ -16,9 +16,9 @@ return new class extends Migration
             $table->unsignedInteger('cantidad_registros');
             $table->string('nombre_archivo');
             $table->string('nombre_usuario');
-            $table->unsignedBigInteger('peso'); 
-            $table->string('mensaje_error'); 
-            $table->timestamps(); 
+            $table->unsignedBigInteger('peso');
+            $table->string('mensaje_error');
+            $table->timestamps();
         });
     }
 
