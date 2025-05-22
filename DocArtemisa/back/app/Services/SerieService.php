@@ -183,4 +183,23 @@ public function importFromCSV($filePath)
         ];
     }
 }
+public function updateSerie($id, array $data)
+{
+    $client = new \GuzzleHttp\Client();
+
+    try {
+        $response = $client->put(env('API_SERIE_URL') . "/series/{$id}", [
+            'json' => $data,
+        ]);
+
+        return response()->json(json_decode($response->getBody()->getContents()), $response->getStatusCode());
+    } catch (\GuzzleHttp\Exception\RequestException $e) {
+        $statusCode = $e->getResponse() ? $e->getResponse()->getStatusCode() : 500;
+        $message = $e->getResponse()
+            ? json_decode($e->getResponse()->getBody()->getContents(), true)
+            : ['error' => 'Error de conexión con la API'];
+
+        return response()->json($message, $statusCode);
+    }
+}
 }

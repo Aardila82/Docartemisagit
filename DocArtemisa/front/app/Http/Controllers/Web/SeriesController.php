@@ -62,7 +62,8 @@ class SeriesController extends Controller
 
 public function update(Request $request, $id)
 {
-    $request->validate([
+    // Validar datos
+    $validatedData = $request->validate([
         'idversion' => 'required|integer',
         'codigo' => 'required|integer',
         'descripcion' => 'required|string',
@@ -71,9 +72,10 @@ public function update(Request $request, $id)
         'estado_id' => 'nullable|exists:estados,id',
     ]);
 
+    // Validar conflicto (puedes moverlo al service si quieres)
     $existe = SerieModel::where('id', '!=', $id)
-        ->where('codigo', $request->codigo)
-        ->where('descripcion', $request->descripcion)
+        ->where('codigo', $validatedData['codigo'])
+        ->where('descripcion', $validatedData['descripcion'])
         ->where('estado_id', '!=', 2)
         ->exists();
 
@@ -83,18 +85,23 @@ public function update(Request $request, $id)
             ->withErrors(['conflicto' => 'Ya existe otra serie con ese código y descripción.']);
     }
 
-    $serie = SerieModel::findOrFail($id);
-    $serie->update([
-        'idversion' => $request->idversion,
-        'codigo' => $request->codigo,
-        'descripcion' => $request->descripcion,
-        'fechainicio' => $request->fechainicio,
-        'fechafin' => $request->fechafin,
-        'estado_id' => $request->estado_id ?? 0,
-    ]);
+    // Llamar al método updateSerie del service que hace la llamada al backend API
+    $response = $this->serieService->updateSerie($id, $validatedData);
 
+    // Obtener datos como array para manejar la respuesta correctamente
+    $data = $response->getData(true);
+
+    if (!$data['success']) {
+        // Si la actualización en el backend API falla, regresamos con error
+        return redirect()->back()
+            ->withInput()
+            ->withErrors($data['errors'] ?? ['error' => 'Error al actualizar la serie en el backend.']);
+    }
+
+    // Si todo va bien, redirigimos con mensaje de éxito
     return redirect()->route('SerieWeb.index')->with('success', 'Serie actualizada correctamente.');
 }
+
 
     public function destroy($id)
     {
