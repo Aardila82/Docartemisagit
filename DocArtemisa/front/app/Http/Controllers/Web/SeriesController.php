@@ -53,89 +53,6 @@ class SeriesController extends Controller
             ->with('message', $response->getData()->data); // mensaje
     }
 
-//     public function edit($id)
-// {
-//     $serie = SerieModel::findOrFail($id);
-//     $estados = Estado::all(); // Trae los estados para el select
-//     return view('SerieWeb.edit', compact('serie', 'estados'));
-// }
-
-
-
-    // public function destroy($id)
-    // {
-    //     $serie = SerieModel::findOrFail($id);
-
-    //     // Validar que estado_id no sea 1 ni 2
-    //     if (in_array($serie->estado_id, [1, 2])) {
-    //         return redirect()->route('SerieWeb.index')
-    //             ->with('error', 'No se puede eliminar una serie con estado Activo o Inactivo.');
-    //     }
-
-    //     $serie->delete();
-
-    //     return redirect()->route('SerieWeb.index')
-    //         ->with('success', 'Serie eliminada correctamente.');
-    // }
-
-
-    // public function masiva($id)
-    // {
-
-    //     /*$response = $serieService->getAllSeries();
-    // $series = empty($response->getData()->data->actas) ? [] : (object)$response->getData()->data->actas;
-    // */
-
-    //     $series = SerieModel::all();
-
-    //     // Crear contenido CSV desde las series
-    //     $csv = [];
-    //     $csv[] = ['codigo', 'descripcion', 'fechainicio', 'fechafin']; // encabezado
-
-    //     foreach ($series as $serie) {
-    //         $csv[] = [
-    //             // $serie->idversion,
-    //             $serie->codigo,
-    //             $serie->descripcion,
-    //             $serie->fechainicio,
-    //             $serie->fechafin,
-    //             //   $serie->estado_id,
-    //         ];
-    //     }
-
-    //     return view('SerieWeb.masiva', ['csvData' => $csv]);
-    // }
-
-    // public function exportarMasiva()
-    // {
-    //     $series = SerieModel::all();
-
-    //     $filename = 'series_' . now()->format('Y-m-d_H-i-s') . '.csv';
-    //     $headers = [
-    //         'Content-Type' => 'text/csv',
-    //         'Content-Disposition' => "attachment; filename=\"$filename\"",
-    //     ];
-
-    //     $callback = function () use ($series) {
-    //         $file = fopen('php://output', 'w');
-    //         // Encabezado
-    //         fputcsv($file, ['codigo', 'descripcion', 'fechainicio', 'fechafin']);
-
-    //         // Contenido
-    //         foreach ($series as $serie) {
-    //             fputcsv($file, [
-    //                 $serie->codigo,
-    //                 $serie->descripcion,
-    //                 $serie->fechainicio,
-    //                 $serie->fechafin,
-    //             ]);
-    //         }
-
-    //         fclose($file);
-    //     };
-
-    //     return response()->stream($callback, 200, $headers);
-    // }
 
     public function procesarMasiva(SerieService $serieService, Request $request)
     {
@@ -223,8 +140,8 @@ public function create()
 
 public function edit($id)
 {
-    $serie = $this->serieService->getSerieById($id)->getData();
-    $estados = $this->serieService->getEstados()->id;
+    $serie = $this->serieService->getSerieById($id)->getData()->data->serie;
+    $estados = $this->serieService->getEstados();
 
     return view('SerieWeb.edit', compact('serie', 'estados'));
 }

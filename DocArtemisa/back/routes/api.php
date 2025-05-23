@@ -29,6 +29,6 @@ Route::post('/serieMasivaAPI', [SerieControllerApi::class, 'importFromCSV']);
 Route::get('/SeriesCargueMasivaAPI', [SeriesCargueMasivaControllerApi::class, 'getAll']);
 Route::post('/SeriesCargueMasivaAPI', [SeriesCargueMasivaControllerApi::class, 'store']);
 
-Route::get('/estados', [EstadoControllerApi::class, 'index']);
+Route::get('/estadoAPI', [EstadoControllerApi::class, 'index']);
 
 

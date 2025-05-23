@@ -7,9 +7,8 @@ use Illuminate\Http\JsonResponse;
 
 class EstadoService
 {
-    public function index(): JsonResponse
+    public function index()
     {
-        $estados = Estado::all();
-        return response()->json($estados);
+        return Estado::all();
     }
 }

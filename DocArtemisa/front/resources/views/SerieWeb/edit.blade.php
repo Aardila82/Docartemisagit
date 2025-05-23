@@ -1,7 +1,7 @@
 @extends('layouts.base')
 
 @section('content')
-<div class="container text-white">
+<div class="container text-black">
     <h2>Editar Serie</h2>
 
    <form action="{{ route('SerieWeb.update', $serie->id) }}" method="POST" class="needs-validation" novalidate>
@@ -59,8 +59,8 @@
         <select name="estado_id" id="estado_id" class="form-select @error('estado_id') is-invalid @enderror">
             <option value="">Seleccione un estado</option>
             @foreach($estados as $estado)
-                <option value="{{ $estado->id }}" {{ (old('estado_id', $serie->estado_id) == $estado->id) ? 'selected' : '' }}>
-                    {{ $estado->nombre }}
+                <option value="{{ $estado['id'] }}" {{ (old('estado_id', $serie->estado_id) == $estado['id']) ? 'selected' : '' }}>
+                    {{ $estado['nombre'] }}
                 </option>
             @endforeach
         </select>

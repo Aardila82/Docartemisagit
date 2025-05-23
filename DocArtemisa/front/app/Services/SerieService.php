@@ -61,9 +61,9 @@ class SerieService extends ApiService
             }
 
             $response = Http::withOptions([
-                    'timeout' => 30,
-                    'max_redirects' => 10,
-                ])
+                'timeout' => 30,
+                'max_redirects' => 10,
+            ])
                 ->attach(
                     'csv_file',
                     file_get_contents($filePath),
@@ -108,16 +108,12 @@ class SerieService extends ApiService
     }
 
     public function getEstados()
-{
-    try {
-        $response = $this->get('estados');
-        return $response->json(); // Retorna los datos sin detener ejecución
-    } catch (RequestException $e) {
-        return []; // Retorna arreglo vacío si falla
+    {
+        try {
+            $response = $this->get('estadoAPI');
+            return $response->json(); // Retorna los datos sin detener ejecución
+        } catch (RequestException $e) {
+            return $this->handleApiError($e);
+        }
     }
-}
-
-
-
-
 }

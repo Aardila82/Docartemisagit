@@ -15,8 +15,10 @@ class EstadoControllerApi extends Controller
         $this->estadoService = $estadoService;
     }
 
-    public function index(): JsonResponse
+    public function index()
     {
-        return $this->estadoService->index();
+        $data = $this->estadoService->index();
+        return response()->json($data);
+
     }
 }
