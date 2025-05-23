@@ -217,4 +217,21 @@ class SerieControllerApi extends Controller
             'status' => 200
         ], 200);
     }
+
+    public function show($id)
+{
+    $serie = SerieModel::find($id);
+
+    if (!$serie) {
+        return response()->json([
+            'mensaje' => 'Serie no encontrada',
+            'status' => 404
+        ], 404);
+    }
+
+    return response()->json([
+        'serie' => $serie,
+        'status' => 200
+    ], 200);
+}
 }

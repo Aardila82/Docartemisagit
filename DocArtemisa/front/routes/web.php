@@ -8,7 +8,8 @@ Route::get('/seriesWeb', [SeriesController::class, 'index'])->name('SerieWeb.ind
 Route::post('/seriesWeb', [SeriesController::class, 'store'])->name('SerieWeb.store');
 Route::get('/seriesWeb/{id}/edit', [SeriesController::class, 'edit'])->name('SerieWeb.edit');
 Route::put('/seriesWeb/{id}', [SeriesController::class, 'update'])->name('SerieWeb.update');
-Route::delete('/seriesWeb/{id}', [SeriesController::class, 'destroy'])->name('SerieWeb.destroy');
+//Route::delete('/seriesWeb/{id}', [SeriesController::class, 'destroy'])->name('SerieWeb.destroy');
+Route::delete('seriesWeb/{id}', [SeriesController::class, 'destroy'])->name('SerieWeb.destroy');
 
 
 Route::get('/seriesWeb/masiva/detalle/{id}', [SeriesController::class, 'masiva'])->name('SerieWeb.masiva');

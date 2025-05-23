@@ -10,7 +10,7 @@ class SerieService extends ApiService
 {
     protected string $urlBase;
 
-    function __construct()
+    public function __construct()
     {
         $this->urlBase = "http://127.0.0.1:8000/api/";
     }
@@ -77,17 +77,27 @@ class SerieService extends ApiService
         }
     }
 
-    /**
-     * Actualiza una serie existente (PUT)
-     *
-     * @param int $id
-     * @param array $data
-     * @return JsonResponse
-     */
     public function updateSerie(int $id, array $data)
     {
         try {
             $response = $this->put("serieAPI/{$id}", $data);
+            $body = $response->object();
+            return [
+                'mensaje' => $body->mensaje ?? 'Actualizado',
+                'status' => $response->status()
+            ];
+        } catch (RequestException $e) {
+            return [
+                'mensaje' => 'Error al actualizar la serie',
+                'status' => 500
+            ];
+        }
+    }
+
+    public function deleteSerie(int $id)
+    {
+        try {
+            $response = $this->delete("serieAPI/{$id}");
             $body = $response->object();
             $statusCode = $response->status();
 
@@ -96,4 +106,18 @@ class SerieService extends ApiService
             return $this->handleApiError($e);
         }
     }
+
+    public function getEstados()
+{
+    try {
+        $response = $this->get('estados');
+        return $response->json(); // Retorna los datos sin detener ejecución
+    } catch (RequestException $e) {
+        return []; // Retorna arreglo vacío si falla
+    }
+}
+
+
+
+
 }

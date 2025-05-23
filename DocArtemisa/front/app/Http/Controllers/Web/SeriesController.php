@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Models\Serie\SerieModel;
+//use App\Models\Serie\SerieModel;
 use Illuminate\Http\Request;
 use App\Services\SerieService;
 use Illuminate\Support\Facades\Validator;
@@ -53,130 +53,89 @@ class SeriesController extends Controller
             ->with('message', $response->getData()->data); // mensaje
     }
 
-    public function edit($id)
-{
-    $serie = SerieModel::findOrFail($id);
-    $estados = Estado::all(); // Trae los estados para el select
-    return view('SerieWeb.edit', compact('serie', 'estados'));
-}
-
-public function update(Request $request, $id)
-{
-    // Validar datos
-    $validatedData = $request->validate([
-        'idversion' => 'required|integer',
-        'codigo' => 'required|integer',
-        'descripcion' => 'required|string',
-        'fechainicio' => 'required|date',
-        'fechafin' => 'required|date|after_or_equal:fechainicio',
-        'estado_id' => 'nullable|exists:estados,id',
-    ]);
-
-    // Validar conflicto (puedes moverlo al service si quieres)
-    $existe = SerieModel::where('id', '!=', $id)
-        ->where('codigo', $validatedData['codigo'])
-        ->where('descripcion', $validatedData['descripcion'])
-        ->where('estado_id', '!=', 2)
-        ->exists();
-
-    if ($existe) {
-        return redirect()->back()
-            ->withInput()
-            ->withErrors(['conflicto' => 'Ya existe otra serie con ese código y descripción.']);
-    }
-
-    // Llamar al método updateSerie del service que hace la llamada al backend API
-    $response = $this->serieService->updateSerie($id, $validatedData);
-
-    // Obtener datos como array para manejar la respuesta correctamente
-    $data = $response->getData(true);
-
-    if (!$data['success']) {
-        // Si la actualización en el backend API falla, regresamos con error
-        return redirect()->back()
-            ->withInput()
-            ->withErrors($data['errors'] ?? ['error' => 'Error al actualizar la serie en el backend.']);
-    }
-
-    // Si todo va bien, redirigimos con mensaje de éxito
-    return redirect()->route('SerieWeb.index')->with('success', 'Serie actualizada correctamente.');
-}
+//     public function edit($id)
+// {
+//     $serie = SerieModel::findOrFail($id);
+//     $estados = Estado::all(); // Trae los estados para el select
+//     return view('SerieWeb.edit', compact('serie', 'estados'));
+// }
 
 
-    public function destroy($id)
-    {
-        $serie = SerieModel::findOrFail($id);
 
-        // Validar que estado_id no sea 1 ni 2
-        if (in_array($serie->estado_id, [1, 2])) {
-            return redirect()->route('SerieWeb.index')
-                ->with('error', 'No se puede eliminar una serie con estado Activo o Inactivo.');
-        }
+    // public function destroy($id)
+    // {
+    //     $serie = SerieModel::findOrFail($id);
 
-        $serie->delete();
+    //     // Validar que estado_id no sea 1 ni 2
+    //     if (in_array($serie->estado_id, [1, 2])) {
+    //         return redirect()->route('SerieWeb.index')
+    //             ->with('error', 'No se puede eliminar una serie con estado Activo o Inactivo.');
+    //     }
 
-        return redirect()->route('SerieWeb.index')
-            ->with('success', 'Serie eliminada correctamente.');
-    }
+    //     $serie->delete();
+
+    //     return redirect()->route('SerieWeb.index')
+    //         ->with('success', 'Serie eliminada correctamente.');
+    // }
 
 
-    public function masiva($id)
-    {
+    // public function masiva($id)
+    // {
 
-        /*$response = $serieService->getAllSeries();
-    $series = empty($response->getData()->data->actas) ? [] : (object)$response->getData()->data->actas;
-    */
+    //     /*$response = $serieService->getAllSeries();
+    // $series = empty($response->getData()->data->actas) ? [] : (object)$response->getData()->data->actas;
+    // */
 
-        $series = SerieModel::all();
+    //     $series = SerieModel::all();
 
-        // Crear contenido CSV desde las series
-        $csv = [];
-        $csv[] = ['codigo', 'descripcion', 'fechainicio', 'fechafin']; // encabezado
+    //     // Crear contenido CSV desde las series
+    //     $csv = [];
+    //     $csv[] = ['codigo', 'descripcion', 'fechainicio', 'fechafin']; // encabezado
 
-        foreach ($series as $serie) {
-            $csv[] = [
-                // $serie->idversion,
-                $serie->codigo,
-                $serie->descripcion,
-                $serie->fechainicio,
-                $serie->fechafin,
-                //   $serie->estado_id,
-            ];
-        }
+    //     foreach ($series as $serie) {
+    //         $csv[] = [
+    //             // $serie->idversion,
+    //             $serie->codigo,
+    //             $serie->descripcion,
+    //             $serie->fechainicio,
+    //             $serie->fechafin,
+    //             //   $serie->estado_id,
+    //         ];
+    //     }
 
-        return view('SerieWeb.masiva', ['csvData' => $csv]);
-    }
+    //     return view('SerieWeb.masiva', ['csvData' => $csv]);
+    // }
 
-    public function exportarMasiva()
-    {
-        $series = SerieModel::all();
+    // public function exportarMasiva()
+    // {
+    //     $series = SerieModel::all();
 
-        $filename = 'series_' . now()->format('Y-m-d_H-i-s') . '.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ];
+    //     $filename = 'series_' . now()->format('Y-m-d_H-i-s') . '.csv';
+    //     $headers = [
+    //         'Content-Type' => 'text/csv',
+    //         'Content-Disposition' => "attachment; filename=\"$filename\"",
+    //     ];
 
-        $callback = function () use ($series) {
-            $file = fopen('php://output', 'w');
-            // Encabezado
-            fputcsv($file, ['codigo', 'descripcion', 'fechainicio', 'fechafin']);
+    //     $callback = function () use ($series) {
+    //         $file = fopen('php://output', 'w');
+    //         // Encabezado
+    //         fputcsv($file, ['codigo', 'descripcion', 'fechainicio', 'fechafin']);
 
-            // Contenido
-            foreach ($series as $serie) {
-                fputcsv($file, [
-                    $serie->codigo,
-                    $serie->descripcion,
-                    $serie->fechainicio,
-                    $serie->fechafin,
-                ]);
-            }
+    //         // Contenido
+    //         foreach ($series as $serie) {
+    //             fputcsv($file, [
+    //                 $serie->codigo,
+    //                 $serie->descripcion,
+    //                 $serie->fechainicio,
+    //                 $serie->fechafin,
+    //             ]);
+    //         }
 
-            fclose($file);
-        };
+    //         fclose($file);
+    //     };
 
-        return response()->stream($callback, 200, $headers);
-    }
+    //     return response()->stream($callback, 200, $headers);
+    // }
 
     public function procesarMasiva(SerieService $serieService, Request $request)
     {
@@ -219,4 +178,56 @@ public function update(Request $request, $id)
 
         return back()->with('success', 'Archivo subido correctamente: ' . $nombre);
     }
+
+    public function destroy($id)
+{
+    $response = $this->serieService->deleteSerie($id);
+    $data = $response->getData(true); // Convierte JsonResponse a array
+
+    if (!isset($data['status']) || $data['status'] !== 200) {
+        return redirect()->back()->withErrors(['error' => $data['mensaje'] ?? 'No se pudo eliminar la serie.']);
+    }
+
+    return redirect()->route('SerieWeb.index')->with('success', $data['mensaje'] ?? 'Serie eliminada correctamente.');
+}
+
+public function update(Request $request, $id)
+{
+    $data = $request->only([
+        'idversion', 'codigo', 'descripcion',
+        'fechainicio', 'fechafin', 'estado_id'
+    ]);
+
+    $response = $this->serieService->updateSerie($id, $data);
+
+    if ($response['status'] === 200) {
+        return redirect()->route('SerieWeb.index')->with('success', $response['mensaje']);
+    }
+
+    return back()->withErrors(['error' => $response['mensaje']]);
+}
+
+// public function edit($id)
+// {
+//     $serie = $this->serieService->getSerieById($id)->getData();
+//    // $estados = $this->estadoService->getAllEstados();
+
+//     return view('serieWeb.edit', compact('serie', 'estados'));
+// }
+
+public function create()
+{
+    $this->serieService->getEstados(); // Verifica qué trae el endpoint
+    // return view(...); // Puedes comentarlo temporalmente
+}
+
+public function edit($id)
+{
+    $serie = $this->serieService->getSerieById($id)->getData();
+    $estados = $this->serieService->getEstados()->id;
+
+    return view('SerieWeb.edit', compact('serie', 'estados'));
+}
+
+
 }

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ActaControllerApi;
 use App\Http\Controllers\Api\SerieControllerApi;
 use App\Http\Controllers\API\SeriesCargueMasivaControllerAPi;
+use App\Http\Controllers\API\EstadoControllerApi;
 
 
 //=== Procesos para el acta ==========
@@ -27,3 +28,7 @@ Route::post('/serieMasivaAPI', [SerieControllerApi::class, 'importFromCSV']);
 
 Route::get('/SeriesCargueMasivaAPI', [SeriesCargueMasivaControllerApi::class, 'getAll']);
 Route::post('/SeriesCargueMasivaAPI', [SeriesCargueMasivaControllerApi::class, 'store']);
+
+Route::get('/estados', [EstadoControllerApi::class, 'index']);
+
+
