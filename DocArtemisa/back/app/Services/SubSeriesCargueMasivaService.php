@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Serie\SeriesCargueMasivaModel;   
+use App\Models\SubSerie\SubSeriesCargueMasivaModel;
 
-class SeriesCargueMasivaService
+class SubSeriesCargueMasivaService
 {
     public function store(Object $data)
     {
-        $archivoMasivo = SeriesCargueMasivaModel::create([
+        $archivoMasivo = SubSeriesCargueMasivaModel::create([
             'cantidad_registros' => $data->cantidad_registros,
             'nombre_archivo' => $data->nombre_archivo,
             'nombre_usuario' => $data->nombre_usuario,
@@ -21,7 +21,7 @@ class SeriesCargueMasivaService
 
     public function getAll($perPage = 10)
 {
-    return SeriesCargueMasivaModel::paginate($perPage);
+    return SubSeriesCargueMasivaModel::paginate($perPage);
 }
 
 
