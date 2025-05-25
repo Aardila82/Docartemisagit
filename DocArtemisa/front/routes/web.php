@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\SeriesController;
 use App\Http\Controllers\Web\SeriesCargueMasivaController;
 
+use App\Http\Controllers\Web\SubSeriesController;
+use App\Http\Controllers\Web\SubSeriesCargueMasivaController;
+
 Route::get('/seriesWeb', [SeriesController::class, 'index'])->name('SerieWeb.index');
 Route::post('/seriesWeb', [SeriesController::class, 'store'])->name('SerieWeb.store');
 Route::get('/seriesWeb/{id}/edit', [SeriesController::class, 'edit'])->name('SerieWeb.edit');
@@ -23,4 +26,17 @@ Route::post('/seriesWeb/subir', [SeriesController::class, 'subir'])->name('serie
 // Masiva
 Route::get('/seriesWeb/masiva/seriesCargueMasiva', [SeriesCargueMasivaController::class, 'getAll'])->name('SerieWeb.seriescarguemasiva');
 
+
+//SubSerie
+Route::get('/subSeriesWeb', [SubSeriesController::class, 'index'])->name('SubSerieWeb.index');
+Route::post('/subSeriesWeb', [SubSeriesController::class, 'store'])->name('SubSerieWeb.store');
+Route::get('/subSeriesWeb/{id}/edit', [SubSeriesController::class, 'edit'])->name('SubSerieWeb.edit');
+Route::put('/subSeriesWeb/{id}', [SubSeriesController::class, 'update'])->name('SubSerieWeb.update');
+Route::delete('subSeriesWeb/{id}', [SubSeriesController::class, 'destroy'])->name('SubSerieWeb.destroy');
+
+Route::get('/subSeriesWeb/masiva/detalle/{id}', [SubSeriesController::class, 'masiva'])->name('SubSerieWeb.masiva');
+Route::post('/subSeriesWeb/masiva/procesarMasiva', [SubSeriesController::class, 'procesarMasiva'])->name('SubSerieWeb.procesarMasiva');
+Route::get('/subSeriesWeb/masiva/exportar', [SubSeriesController::class, 'exportarMasiva'])->name('SubSerieWeb.exportar');
+Route::post('/subSeriesWeb/subir', [SubSeriesController::class, 'subir'])->name('SubSerieWeb.subir');
+Route::get('/subSeriesWeb/masiva/seriesCargueMasiva', [SubSeriesCargueMasivaController::class, 'getAll'])->name('SubSerieWeb.seriescarguemasiva');
 

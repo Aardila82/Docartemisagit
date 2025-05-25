@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\Serie\SerieModel;
 use Illuminate\Database\Eloquent\Model;
 
-class Estado extends Model
+class EstadoModel extends Model
 {
     protected $table = 'estados';
     protected $primaryKey = 'id';

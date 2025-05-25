@@ -22,23 +22,55 @@ class SubSerieVersionControllerApi extends Controller
     }
 
 
-
     // Mostrar todos los registros
     public function index()
     {
+
+        try {
+            $subSerie = $this->subSerieService->getAll();
+
+            return response()->json([
+                'data' => $subSerie["data"],
+                'errors' => $subSerie["errors"],
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'data' => [],
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [],
+                'errors' => [$e->getMessage()]
+            ], 500);
+        }
+
         return response()->json(SubSerieVersionModel::all(), 200);
     }
 
     // Mostrar un solo registro
     public function show($id)
     {
-        $subSerie = SubSerieVersionModel::find($id);
+        try {
+            $subSerie = $this->subSerieService->getAll($id);
 
-        if (!$subSerie) {
-            return response()->json(['error' => 'Registro no encontrado'], 404);
+            return response()->json([
+                'data' => $subSerie["data"],
+                'errors' => $subSerie["errors"],
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'data' => [],
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [],
+                'errors' => [$e->getMessage()]
+            ], 500);
         }
 
-        return response()->json($subSerie, 200);
+        return response()->json(SubSerieVersionModel::all(), 200);
     }
 
     // Crear un nuevo registro
@@ -46,19 +78,16 @@ class SubSerieVersionControllerApi extends Controller
     {
         try {
             $subSerie = $this->subSerieService->store($request->all());
-            //echo "<pre>".print_r($subSerie , true)."</pre>";
 
             return response()->json([
                 'data' => $subSerie["data"],
                 'errors' => $subSerie["errors"],
             ], 201);
-
         } catch (ValidationException $e) {
             return response()->json([
                 'data' => [],
                 'errors' => $e->errors()
             ], 422);
-
         } catch (\Exception $e) {
             return response()->json([
                 'data' => [],

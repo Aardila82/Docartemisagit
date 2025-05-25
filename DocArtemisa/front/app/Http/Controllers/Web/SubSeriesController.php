@@ -4,26 +4,26 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\SerieService;
+use App\Services\SubSerieService;
 use Illuminate\Support\Facades\Validator;
 
-class SeriesController extends Controller
+class SubSeriesController extends Controller
 {
 
-    protected $serieService;
+    protected $subSerieService;
 
     public function __construct(
-        SerieService $serieService
+        SubSerieService $subSerieService
     ) {
-        $this->serieService = $serieService;
+        $this->subSerieService = $subSerieService;
     }
 
-    public function index(SerieService $serieService)
+    public function index(SubSerieService $subSerieService)
     {
-        $response = $serieService->getAllSeries();
-        $series = empty($response->getData()->data->actas) ? [] : (object)$response->getData()->data->actas;
-
-        return view('SerieWeb.index', compact('series'));
+        $response = $subSerieService->getAll();
+        $subSeries = empty($response->getData()->data) ? [] : (object)$response->getData()->data->data;
+        $estados = $this->subSerieService->getEstados();
+        return view('SubSerieWeb.index', compact('subSeries' , 'estados'));
     }
 
     public function store(Request $request)
@@ -44,7 +44,7 @@ class SeriesController extends Controller
             'estado_id' => $request->estado_id ?? 0,
         ];
 
-        $response = $this->serieService->createSerie($data);
+        $response = $this->subSerieService->createSerie($data);
         //dd($response);
         return redirect()->route('SerieWeb.index')
             ->with('success', $response->status() == 201 ? true : false) // true/false
@@ -52,7 +52,7 @@ class SeriesController extends Controller
     }
 
 
-    public function procesarMasiva(SerieService $serieService, Request $request)
+    public function procesarMasiva(SubSerieService $serieService, Request $request)
     {
         $validator = Validator::make($request->all(), [
             'csv_file' => 'required|file|mimes:csv,txt|max:10240', // 10MB máximo
@@ -122,13 +122,6 @@ public function update(Request $request, $id)
     return back()->withErrors(['error' => $response['mensaje']]);
 }
 
-// public function edit($id)
-// {
-//     $serie = $this->serieService->getSerieById($id)->getData();
-//    // $estados = $this->estadoService->getAllEstados();
-
-//     return view('serieWeb.edit', compact('serie', 'estados'));
-// }
 
 public function create()
 {

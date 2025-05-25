@@ -35,9 +35,12 @@ return new class extends Migration
             $table->unique(['id_codigo_serie', 'codigo_subserie']);
 
             $table->foreign('id_codigo_serie')
-                  ->references('id')
-                  ->on('serieversion')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('serieversion')
+                ->onDelete('cascade');
+
+            $table->unsignedBigInteger('estado_id')->default(0);
+            $table->foreign('estado_id')->references('id')->on('estados')->onDelete('no action');
         });
     }
 

@@ -3,7 +3,7 @@
 namespace App\Models\Serie;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Estado;
+use App\Models\EstadoModel;
 
 class SerieModel extends Model
 {
@@ -15,6 +15,6 @@ class SerieModel extends Model
     public function estado()
     {
         // Definimos que esta serie pertenece a un estado, usando 'estado_id' como clave foránea
-        return $this->belongsTo(Estado::class, 'estado_id', 'id');
+        return $this->belongsTo(EstadoModel::class, 'estado_id', 'id');
     }
 }

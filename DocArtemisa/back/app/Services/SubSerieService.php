@@ -3,14 +3,12 @@
 namespace App\Services;
 
 use App\Models\SubSerie\SubSerieVersionModel;
-use App\Models\Serie\SerieVersionModel;
 use App\Models\Serie\SerieModel;
 
 use Illuminate\Support\Facades\Validator;
 use App\Services\SubSeriesCargueMasivaService;
 use Illuminate\Support\Facades\File;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Http\JsonResponse;
+
 
 
 class SubSerieService
@@ -23,6 +21,49 @@ class SubSerieService
         SubSeriesCargueMasivaService $subSeriesCargueMasivaService
     ) {
         $this->subSeriesCargueMasivaService = $subSeriesCargueMasivaService;
+    }
+
+    public function getAll()
+    {
+        //$perPage = $request->get('per_page', 10); // Se puede pasar por la URL
+        try {
+            $data = SubSerieVersionModel::with(['estado', 'serieVersion'])->get();
+            return [
+                'data' => $data,
+                'errors' => [],
+                'status' => 500
+            ];            
+            return response()->json($data);
+        } catch (\Exception $e) {
+
+            return [
+                'data' => [],
+                'errors' => $e->getMessage(),
+                'status' => 500
+            ];
+        }
+    }
+
+    public function show($id){
+                try {
+            $data = SubSerieVersionModel::find($id);
+
+            return [
+                'data' => $data,
+                'errors' => [],
+                'status' => 500
+            ];            
+            return response()->json($data);
+        } catch (\Exception $e) {
+
+            return [
+                'data' => [],
+                'errors' => $e->getMessage(),
+                'status' => 500
+            ];
+        }
+
+        return SubSerieVersionModel::find($id);
     }
 
     public function importFromCSV($filePath)

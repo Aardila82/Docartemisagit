@@ -5,6 +5,7 @@ namespace App\Models\SubSerie;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use  App\Models\Serie\SerieModel;
+use  App\Models\EstadoModel;
 
 class SubSerieVersionModel extends Model
 {
@@ -48,4 +49,12 @@ class SubSerieVersionModel extends Model
     {
         return $this->belongsTo(SerieModel::class, 'id_codigo_serie', 'id');
     }
+
+
+        public function estado()
+    {
+        return $this->belongsTo(EstadoModel::class, 'estado_id');
+    }
+    
+
 }
