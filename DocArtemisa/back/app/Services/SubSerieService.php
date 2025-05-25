@@ -2,12 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\SubSerie\SubSerieVersion;
+use App\Models\SubSerie\SubSerieVersionModel;
+use App\Models\Serie\SerieVersionModel;
+use App\Models\Serie\SerieModel;
+
 use Illuminate\Support\Facades\Validator;
 use App\Services\SubSeriesCargueMasivaService;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Http\JsonResponse;
 
-class SerieService
+
+class SubSerieService
 {
 
     protected $subSeriesCargueMasivaService;
@@ -100,7 +106,7 @@ class SerieService
         }
 
         // Verificar si ya existe una serie con el mismo código y descripción
-        $existe = SubSerieVersion::where('codigo', $data['codigo'])
+        $existe = SubSerieVersionModel::where('codigo', $data['codigo'])
             ->where('descripcion', $data['descripcion'])
             ->where('estado_id', '!=', 2)
             ->exists();
@@ -118,7 +124,7 @@ class SerieService
 
         // Crear el registro
         try {
-            SubSerieVersion::create($data);
+            SubSerieVersionModel::create($data);
             return ['success' => true];
         } catch (\Exception $e) {
             return [
@@ -132,55 +138,151 @@ class SerieService
         }
     }
 
-    public function update(int $id, array $data): array
+
+    public function store(array $data)
     {
-        // Validar los datos entrantes
         $validator = Validator::make($data, [
-            'codigo' => 'required|integer',
-            'descripcion' => 'required|string',
-            'fechainicio' => 'required|date',
-            'fechafin' => 'required|date|after_or_equal:fechainicio',
+            'id_codigo_serie'     => 'required|integer',
+            'codigo_subserie'     => 'required|integer',
+            'descripcion'         => 'required|string|max:255',
+            'fecha_inicio'        => 'required|date',
+            'fecha_final'         => 'required|date|after_or_equal:fecha_inicio',
+            'archivo_gestion'     => 'nullable|boolean',
+            'archivo_central'     => 'nullable|boolean',
+            'conservacion_total'  => 'nullable|boolean',
+            'eliminacion'         => 'nullable|boolean',
+            'microfilmacion'      => 'nullable|boolean',
+            'seleccion'           => 'nullable|boolean',
+            'procedimiento'       => 'nullable|string|max:1000',
+            'version'             => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
             return [
-                'success' => false,
-                'errors' => $validator->errors()->toArray()
+                'data' => [],
+                'errors' => $validator->errors(),
+                'status' => 422
+            ];
+        }
+        $validated = $validator->validated();
+
+        $duplicado = SubSerieVersionModel::where('id_codigo_serie', $validated['id_codigo_serie'])
+            ->where('codigo_subserie', $validated['codigo_subserie'])
+            ->where('descripcion', $validated['descripcion'])
+            ->exists();
+
+        if ($duplicado) {
+            return [
+                'data' => [],
+                'errors' => ['Ya existe una subserie con esa combinación de id_codigo_serie, codigo_subserie y descripción.'],
+                'status' => 409
+            ];
+        }
+
+        $serieExiste = SerieModel::find($validated['id_codigo_serie']);
+        if (!$serieExiste) {
+            return [
+                'data' => [],
+                'errors' => ['El id_codigo_serie no existe en la tabla serieversion.'],
+                'status' => 404
             ];
         }
 
         try {
-            // Buscar la serie por ID
-            $subSerie = SubSerieVersion::findOrFail($id);
-
-            // Verificar si existe otra serie con el mismo código y descripción (evitando conflicto con sí misma)
-            $existe = SubSerieVersion::where('id', '!=', $id)
-                ->where('codigo', $data['codigo'])
-                ->where('descripcion', $data['descripcion'])
-                ->where('estado_id', '!=', 2)
-                ->exists();
-
-            if ($existe) {
-                return [
-                    'success' => false,
-                    'errors' => ['conflicto' => 'Ya existe otra serie con este código y descripción']
-                ];
-            }
-
-            // Actualizar la serie
-            $subSerie->update($data);
+            $subSerie = SubSerieVersionModel::create($validator->validated());
 
             return [
-                'success' => true,
-                'data' => $subSerie
+                'data' => [['id' => $subSerie->id]],
+                'errors' => [],
+                'status' => 200
             ];
         } catch (\Exception $e) {
             return [
-                'success' => false,
-                'errors' => ['exception' => $e->getMessage()]
+                'data' => [],
+                'errors' => [$e->getMessage()],
+                'status' => 500
             ];
         }
     }
-    
 
+    public function update(array $data, int $id)
+    {
+        $subSerie = SubSerieVersionModel::find($id);
+
+        if (!$subSerie) {
+            return [
+                'data' => [],
+                'errors' => ['Registro con ID proporcionado no encontrado.'],
+                'status' => 404
+            ];
+        }
+
+        // Validar datos base
+        $validator = Validator::make($data, [
+            'id_codigo_serie'     => 'required|integer',
+            'codigo_subserie'     => 'required|integer',
+            'descripcion'         => 'required|string|max:255',
+            'fecha_inicio'        => 'required|date',
+            'fecha_final'         => 'required|date|after_or_equal:fecha_inicio',
+            'archivo_gestion'     => 'nullable|boolean',
+            'archivo_central'     => 'nullable|boolean',
+            'conservacion_total'  => 'nullable|boolean',
+            'eliminacion'         => 'nullable|boolean',
+            'microfilmacion'      => 'nullable|boolean',
+            'seleccion'           => 'nullable|boolean',
+            'procedimiento'       => 'nullable|string|max:1000',
+            'version'             => 'nullable|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'data' => [],
+                'errors' => $validator->errors(),
+                'status' => 422
+            ];
+        }
+
+        $validated = $validator->validated();
+
+        // Validar existencia de la serie
+        $serieExiste = SerieModel::find($validated['id_codigo_serie']);
+        if (!$serieExiste) {
+            return [
+                'data' => [],
+                'errors' => ['El id_codigo_serie no existe en la tabla serieversion.'],
+                'status' => 404
+            ];
+        }
+
+        // Validar combinación única (excluyendo el registro actual)
+        $duplicado = SubSerieVersionModel::where('id_codigo_serie', $validated['id_codigo_serie'])
+            ->where('codigo_subserie', $validated['codigo_subserie'])
+            ->where('descripcion', $validated['descripcion'])
+            ->exists();
+
+        if ($duplicado) {
+            return [
+                'data' => [],
+                'errors' => ['Ya existe una subserie con esa combinación de id_codigo_serie, codigo_subserie y descripción.'],
+                'status' => 409
+            ];
+        }
+
+        // Actualizar el registro
+        try {
+            $subSerie->update($validated);
+
+            return [
+                'data' => [['id' => $subSerie->id]],
+                'errors' => [],
+                'status' => 200
+            ];
+        } catch (\Exception $e) {
+            return [
+                'data' => [],
+                'errors' => [$e->getMessage()],
+                'status' => 500
+            ];
+        }
+    }
 }

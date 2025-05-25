@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('sub_series_cargue_masiva', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('cantidad_registros');
+            $table->string('nombre_archivo');
+            $table->string('nombre_usuario');
+            $table->unsignedBigInteger('peso');
+            $table->string('mensaje_error');
             $table->timestamps();
         });
     }
