@@ -35,13 +35,15 @@ class SubSerieService extends ApiService
         }
     }
 
-    public function createSerie(array $data)
+    public function createSubSerie(array $data)
     {
         try {
             $response = $this->post('subSerieAPI', $data);
             $body = $response->object();
+
             $statusCode = $body->status ?? 200;
-            $mensaje = $body->mensaje ?? 'Sub Serie creada correctamente.';
+            $mensaje = !empty($body->errors) ? implode("<br>" , $body->errors) : "";
+            //dd($data);
 
             return $this->successResponse($mensaje, $statusCode);
         } catch (RequestException $e) {

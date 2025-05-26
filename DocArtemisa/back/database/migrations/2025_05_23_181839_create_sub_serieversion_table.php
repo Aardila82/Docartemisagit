@@ -32,7 +32,7 @@ return new class extends Migration
             $table->text('procedimiento')->nullable();
             $table->integer('version');
 
-            $table->unique(['id_codigo_serie', 'codigo_subserie']);
+            $table->unique(['id_codigo_serie', 'codigo_subserie', 'descripcion']);
 
             $table->foreign('id_codigo_serie')
                 ->references('id')

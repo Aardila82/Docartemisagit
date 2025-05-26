@@ -49,7 +49,7 @@ class SubSerieService
             }
 
             // Paginación (10 por defecto)
-            $perPage = $validated['per_page'] ?? 10;
+            $perPage = $validated['per_page'] ?? 1000;
             $data = $query->paginate($perPage);
 
             return [
@@ -231,7 +231,6 @@ class SubSerieService
             'microfilmacion'      => 'nullable|boolean',
             'seleccion'           => 'nullable|boolean',
             'procedimiento'       => 'nullable|string|max:1000',
-            'version'             => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -266,7 +265,9 @@ class SubSerieService
         }
 
         try {
-            $subSerie = SubSerieVersionModel::create($validator->validated());
+            $data = $validator->validated();
+            $data["version"] = 0;
+            $subSerie = SubSerieVersionModel::create($data);
 
             return [
                 'data' => [['id' => $subSerie->id]],

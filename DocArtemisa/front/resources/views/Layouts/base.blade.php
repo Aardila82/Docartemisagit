@@ -52,7 +52,23 @@
                         </ul>
                     </li>
 
-                </ul>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="subSeriesDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Sub Series
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="subSeriesDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('SubSerieWeb.index') }}">Sub Serie Individual</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('SerieWeb.seriescarguemasiva') }}">Cargue Masivo</a>
+                                <!-- Aquí pondrás la ruta más adelante -->
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>                
                 <span class="navbar-text">
                     Bienvenido, Usuario
                 </span>

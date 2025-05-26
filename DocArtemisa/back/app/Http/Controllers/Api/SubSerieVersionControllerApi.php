@@ -82,16 +82,20 @@ class SubSerieVersionControllerApi extends Controller
             return response()->json([
                 'data' => $subSerie["data"],
                 'errors' => $subSerie["errors"],
-            ], 201);
+                'status' => $subSerie["status"],
+            ], $subSerie["status"]);
         } catch (ValidationException $e) {
             return response()->json([
                 'data' => [],
-                'errors' => $e->errors()
+                'errors' => $e->errors(),
+                'status' => 422,
+
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'data' => [],
-                'errors' => [$e->getMessage()]
+                'errors' => [$e->getMessage(),],
+                'status' => 500
             ], 500);
         }
     }

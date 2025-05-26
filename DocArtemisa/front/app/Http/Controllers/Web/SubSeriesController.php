@@ -27,11 +27,12 @@ class SubSeriesController extends Controller
     public function index()
     {
         $response = $this->subSerieService->getAll();
-        dd($response->getData());
+        //dd($response->getData());
         $subSeries = empty($response->getData()->data) ? [] : (object)$response->getData()->data->data->data;
 
         $response = $this->serieService->getAllActive();
-        $series = empty($response->getData()->data) ? [] : (object)$response->getData()->data->actas;
+        //dd($response->getData()->data);
+        $series = empty($response->getData()->data->actas) ? [] : (object)$response->getData()->data->actas;
 
         //dd($response->getData()->data->actas);
         $estados = $this->subSerieService->getEstados();
@@ -41,24 +42,40 @@ class SubSeriesController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'codigo' => 'required|integer',
-            'descripcion' => 'required|string',
-            'fechainicio' => 'required|date',
-            'fechafin' => 'required|date|after_or_equal:fechainicio',
-            'estado_id' => 'nullable|exists:estados,id',
+            'id_codigo_serie'     => 'required|integer',
+            'codigo_subserie'     => 'required|integer',
+            'descripcion'         => 'required|string|max:255',
+            'fecha_inicio'        => 'required|date',
+            'fecha_final'         => 'required|date|after_or_equal:fecha_inicio',
+            'archivo_gestion'     => 'nullable|boolean',
+            'archivo_central'     => 'nullable|boolean',
+            'conservacion_total'  => 'nullable|boolean',
+            'eliminacion'         => 'nullable|boolean',
+            'microfilmacion'      => 'nullable|boolean',
+            'seleccion'           => 'nullable|boolean',
+            'procedimiento'       => 'nullable|string|max:1000',
         ]);
 
         $data = [
-            'codigo' => $request->codigo,
-            'descripcion' => $request->descripcion,
-            'fechainicio' => $request->fechainicio,
-            'fechafin' => $request->fechafin,
-            'estado_id' => $request->estado_id ?? 0,
-        ];
+            'id_codigo_serie'     => $request->id_codigo_serie,
+            'codigo_subserie'     => $request->codigo_subserie,
+            'descripcion'         => $request->descripcion,
+            'fecha_inicio'        => $request->fecha_inicio,
 
-        $response = $this->subSerieService->createSerie($data);
-        //dd($response);
-        return redirect()->route('SerieWeb.index')
+            'fecha_final'         => $request->fecha_final,
+            'archivo_gestion'     => $request->archivo_gestion,
+            'archivo_central'     => $request->archivo_central,
+            'conservacion_total'  => $request->conservacion_total,
+
+            'eliminacion'         => $request->eliminacion,
+            'microfilmacion'      => $request->microfilmacion,
+            'seleccion'           => $request->seleccion,
+            'procedimiento'       => $request->procedimiento,
+        ];
+        $response = $this->subSerieService->createSubSerie($data);
+
+        //die($response);
+        return redirect()->route('SubSerieWeb.index')
             ->with('success', $response->status() == 201 ? true : false) // true/false
             ->with('message', $response->getData()->data); // mensaje
     }
@@ -115,7 +132,7 @@ class SubSeriesController extends Controller
         return redirect()->back()->withErrors(['error' => $data['mensaje'] ?? 'No se pudo eliminar la serie.']);
     }
 
-    return redirect()->route('SerieWeb.index')->with('success', $data['mensaje'] ?? 'Serie eliminada correctamente.');
+    return redirect()->route('SubSerieWeb.index')->with('success', $data['mensaje'] ?? 'Sub Serie eliminada correctamente.');
 }
 
 public function update(Request $request, $id)

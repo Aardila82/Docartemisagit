@@ -229,10 +229,6 @@
               <textarea class="form-control" id="procedimiento" name="procedimiento" rows="3"></textarea>
             </div>
 
-            <div class="col-md-6 mb-3">
-              <label for="version" class="form-label">Versión</label>
-              <input type="number" class="form-control" id="version" name="version">
-            </div>
           </div>
 
           <div class="modal-footer">
