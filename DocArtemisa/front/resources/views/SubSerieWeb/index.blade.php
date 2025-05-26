@@ -132,7 +132,6 @@
 
   @endif
   <!-- Modal -->
-  <!-- Modal -->
 
   <div class="modal fade" id="modalSubserie" tabindex="-1" aria-labelledby="modalSubserieLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">

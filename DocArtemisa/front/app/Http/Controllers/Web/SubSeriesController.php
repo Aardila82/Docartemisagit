@@ -27,6 +27,7 @@ class SubSeriesController extends Controller
     public function index()
     {
         $response = $this->subSerieService->getAll();
+        dd($response->getData());
         $subSeries = empty($response->getData()->data) ? [] : (object)$response->getData()->data->data->data;
 
         $response = $this->serieService->getAllActive();
