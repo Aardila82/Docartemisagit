@@ -81,7 +81,7 @@
 
         <td>
           @if($subSerie->estado_id != 2)
-          <a href="{{ route('SerieWeb.edit', $subSerie->id) }}" class="text-dark me-2">
+          <a href="{{ route('SubSerieWeb.edit', $subSerie->id) }}" class="text-dark me-2">
             <i class="fas fa-edit"></i>
           </a>
           @endif

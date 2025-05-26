@@ -32,7 +32,7 @@ Route::post('/SeriesCargueMasivaAPI', [SeriesCargueMasivaControllerApi::class, '
 Route::get('/subSerieAPI',[SubSerieVersionControllerApi::class, 'index']);
 Route::post('/subSerieAPI', [SubSerieVersionControllerApi::class, 'store']);
 Route::get('/subSerieAPI/{id}', [SubSerieVersionControllerApi::class, 'show']);
-Route::put('/suSerieAPI/{id}', [SubSerieVersionControllerApi::class, 'update']);
+Route::put('/subSerieAPI/{id}', [SubSerieVersionControllerApi::class, 'update']);
 Route::delete('/subSerieAPI/{id}', [SubSerieVersionControllerApi::class, 'destroy']);
 
 //Sub Serie Masiva

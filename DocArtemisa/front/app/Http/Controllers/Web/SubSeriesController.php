@@ -17,7 +17,7 @@ class SubSeriesController extends Controller
 
     public function __construct(
         SubSerieService $subSerieService,
-        SerieService $serieService  
+        SerieService $serieService
 
     ) {
         $this->subSerieService = $subSerieService;
@@ -36,7 +36,7 @@ class SubSeriesController extends Controller
 
         //dd($response->getData()->data->actas);
         $estados = $this->subSerieService->getEstados();
-        return view('SubSerieWeb.index', compact('subSeries' , 'estados' , 'series'));
+        return view('SubSerieWeb.index', compact('subSeries', 'estados', 'series'));
     }
 
     public function store(Request $request)
@@ -124,47 +124,44 @@ class SubSeriesController extends Controller
     }
 
     public function destroy($id)
-{
-    $response = $this->subSerieService->deleteSerie($id);
-    $data = $response->getData(true); // Convierte JsonResponse a array
+    {
+        $response = $this->subSerieService->deleteSerie($id);
+        $data = $response->getData(true); // Convierte JsonResponse a array
 
-    if (!isset($data['status']) || $data['status'] !== 200) {
-        return redirect()->back()->withErrors(['error' => $data['mensaje'] ?? 'No se pudo eliminar la serie.']);
+        if (!isset($data['status']) || $data['status'] !== 200) {
+            return redirect()->back()->withErrors(['error' => $data['mensaje'] ?? 'No se pudo eliminar la serie.']);
+        }
+
+        return redirect()->route('SubSerieWeb.index')->with('success', $data['mensaje'] ?? 'Sub Serie eliminada correctamente.');
     }
 
-    return redirect()->route('SubSerieWeb.index')->with('success', $data['mensaje'] ?? 'Sub Serie eliminada correctamente.');
-}
+    public function update(Request $request, $id)
+    {
+        $data = $request->only([
+            'idversion',
+            'codigo',
+            'descripcion',
+            'fechainicio',
+            'fechafin',
+            'estado_id'
+        ]);
 
-public function update(Request $request, $id)
-{
-    $data = $request->only([
-        'idversion', 'codigo', 'descripcion',
-        'fechainicio', 'fechafin', 'estado_id'
-    ]);
+        $response = $this->subSerieService->updateSerie($id, $data);
 
-    $response = $this->subSerieService->updateSerie($id, $data);
+        if ($response['status'] === 200) {
+            return redirect()->route('SerieWeb.index')->with('success', $response['mensaje']);
+        }
 
-    if ($response['status'] === 200) {
-        return redirect()->route('SerieWeb.index')->with('success', $response['mensaje']);
+        return back()->withErrors(['error' => $response['mensaje']]);
     }
 
-    return back()->withErrors(['error' => $response['mensaje']]);
-}
 
 
-/*public function create()
-{
-    $this->subSerieService->getEstados(); // Verifica qué trae el endpoint
-    // return view(...); // Puedes comentarlo temporalmente
-}*/
+    public function edit($id)
+    {
+        $subSerie = $this->subSerieService->getSerieById($id)->getData()->data->data;
+        $estados = $this->subSerieService->getEstados();
 
-public function edit($id)
-{
-    $serie = $this->subSerieService->getSerieById($id)->getData()->data->serie;
-    $estados = $this->subSerieService->getEstados();
-
-    return view('SerieWeb.edit', compact('serie', 'estados'));
-}
-
-
+        return view('SubSerieWeb.edit', compact('subSerie', 'estados'));
+    }
 }

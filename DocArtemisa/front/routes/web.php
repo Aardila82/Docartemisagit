@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\SeriesCargueMasivaController;
 use App\Http\Controllers\Web\SubSeriesController;
 use App\Http\Controllers\Web\SubSeriesCargueMasivaController;
 
+
 Route::get('/seriesWeb', [SeriesController::class, 'index'])->name('SerieWeb.index');
 Route::post('/seriesWeb', [SeriesController::class, 'store'])->name('SerieWeb.store');
 Route::get('/seriesWeb/{id}/edit', [SeriesController::class, 'edit'])->name('SerieWeb.edit');

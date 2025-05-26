@@ -87,9 +87,8 @@ class SubSerieService
             return [
                 'data' => $data,
                 'errors' => [],
-                'status' => 500
+                'status' => 200
             ];
-            return response()->json($data);
         } catch (\Exception $e) {
 
             return [
@@ -99,7 +98,6 @@ class SubSerieService
             ];
         }
 
-        return SubSerieVersionModel::find($id);
     }
 
     public function importFromCSV($filePath)

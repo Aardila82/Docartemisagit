@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Estado;
+use App\Models\EstadoModel;
 use Illuminate\Http\JsonResponse;
 
 class EstadoService
 {
     public function index()
     {
-        return Estado::all();
+        return EstadoModel::all();
     }
 }

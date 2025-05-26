@@ -44,7 +44,6 @@ class SubSerieVersionControllerApi extends Controller
             ], 500);
         }
 
-        return response()->json(SubSerieVersionModel::all(), 200);
     }
 
 
@@ -52,8 +51,7 @@ class SubSerieVersionControllerApi extends Controller
     public function show($id)
     {
         try {
-            $subSerie = $this->subSerieService->getAll($id);
-
+            $subSerie = $this->subSerieService->show($id);
             return response()->json([
                 'data' => $subSerie["data"],
                 'errors' => $subSerie["errors"],
@@ -70,7 +68,6 @@ class SubSerieVersionControllerApi extends Controller
             ], 500);
         }
 
-        return response()->json(SubSerieVersionModel::all(), 200);
     }
 
     // Crear un nuevo registro
