@@ -23,12 +23,11 @@ class SubSerieVersionControllerApi extends Controller
 
 
     // Mostrar todos los registros
-    public function index()
+    public function index(Request $request)
     {
 
         try {
-            $subSerie = $this->subSerieService->getAll();
-
+            $subSerie = $this->subSerieService->getAll($request->all());
             return response()->json([
                 'data' => $subSerie["data"],
                 'errors' => $subSerie["errors"],
@@ -47,6 +46,7 @@ class SubSerieVersionControllerApi extends Controller
 
         return response()->json(SubSerieVersionModel::all(), 200);
     }
+
 
     // Mostrar un solo registro
     public function show($id)

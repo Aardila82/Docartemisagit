@@ -19,7 +19,88 @@ class SerieService
         $this->seriesCargueMasivaService = $SeriesCargueMasivaService;
     }
 
-public function importFromCSV($filePath)
+
+    public function getAll($params)
+    {
+        try {
+            $validator = Validator::make($params, [
+                'estado_id' => 'sometimes|integer',
+                'per_page' => 'sometimes|integer|min:1|max:1000',
+                'page' => 'sometimes|integer|min:1'
+            ]);
+
+            if ($validator->fails()) {
+                return [
+                    'data' => [],
+                    'errors' => $validator->errors(),
+                    'status' => 422
+                ];
+            }
+            $validated = $validator->validated();
+
+            $query = SerieModel::with(['estado']);
+
+            // Aplicar filtros
+            if (!empty($params['estado_id'])) {
+                $query->where('estado_id', $params['estado_id']);
+            }
+
+            // Paginación (10 por defecto)
+            $perPage = $validated['per_page'] ?? 10;
+            $data = $query->paginate($perPage);
+
+            return [
+                'data' => [
+                    'data' => $data->items(),
+                    'meta' => [
+                        'total' => $data->total(),
+                        'per_page' => $data->perPage(),
+                        'current_page' => $data->currentPage(),
+                        'last_page' => $data->lastPage(),
+                        'from' => $data->firstItem(),
+                        'to' => $data->lastItem()
+                    ]
+
+                ],
+                'errors' => [],
+                'status' => 500
+            ];
+        } catch (\Exception $e) {
+
+            return [
+                'data' => [],
+                'errors' => $e->getMessage(),
+                'status' => 500
+            ];
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+
+            $data = SerieModel::find($id);
+
+            return [
+                'data' => $data,
+                'errors' => [],
+                'status' => 500
+            ];
+            return response()->json($data);
+        } catch (\Exception $e) {
+
+            return [
+                'data' => [],
+                'errors' => $e->getMessage(),
+                'status' => 500
+            ];
+        }
+
+        return SerieModel::find($id);
+    }
+
+
+    public function importFromCSV($filePath)
     {
         try {
             $file = file($filePath);
@@ -33,7 +114,7 @@ public function importFromCSV($filePath)
                 'peso' => File::size($filePath),
             ];
 
-            $this->seriesCargueMasivaService->store((Object)$dataInicial);
+            $this->seriesCargueMasivaService->store((object)$dataInicial);
 
             // Leer el archivo CSV
             $csvData = array_map('str_getcsv', $file);
@@ -58,11 +139,10 @@ public function importFromCSV($filePath)
             }
 
             return $results;
-
         } catch (\Exception $e) {
             $dataError = $dataInicial ?? [];
             $dataError['mensaje_error'] = $e->getMessage();
-            $this->seriesCargueMasivaService->store((Object)$dataError);
+            $this->seriesCargueMasivaService->store((object)$dataError);
 
             return [
                 'imported' => 0,
@@ -134,72 +214,71 @@ public function importFromCSV($filePath)
     }
 
     public function update(int $id, array $data): array
-{
-    // Validar los datos entrantes
-    $validator = Validator::make($data, [
-        'codigo' => 'required|integer',
-        'descripcion' => 'required|string',
-        'fechainicio' => 'required|date',
-        'fechafin' => 'required|date|after_or_equal:fechainicio',
-    ]);
+    {
+        // Validar los datos entrantes
+        $validator = Validator::make($data, [
+            'codigo' => 'required|integer',
+            'descripcion' => 'required|string',
+            'fechainicio' => 'required|date',
+            'fechafin' => 'required|date|after_or_equal:fechainicio',
+        ]);
 
-    if ($validator->fails()) {
-        return [
-            'success' => false,
-            'errors' => $validator->errors()->toArray()
-        ];
-    }
-
-    try {
-        // Buscar la serie por ID
-        $serie = SerieModel::findOrFail($id);
-
-        // Verificar si existe otra serie con el mismo código y descripción (evitando conflicto con sí misma)
-        $existe = SerieModel::where('id', '!=', $id)
-            ->where('codigo', $data['codigo'])
-            ->where('descripcion', $data['descripcion'])
-            ->where('estado_id', '!=', 2)
-            ->exists();
-
-        if ($existe) {
+        if ($validator->fails()) {
             return [
                 'success' => false,
-                'errors' => ['conflicto' => 'Ya existe otra serie con este código y descripción']
+                'errors' => $validator->errors()->toArray()
             ];
         }
 
-        // Actualizar la serie
-        $serie->update($data);
+        try {
+            // Buscar la serie por ID
+            $serie = SerieModel::findOrFail($id);
 
-        return [
-            'success' => true,
-            'data' => $serie
-        ];
+            // Verificar si existe otra serie con el mismo código y descripción (evitando conflicto con sí misma)
+            $existe = SerieModel::where('id', '!=', $id)
+                ->where('codigo', $data['codigo'])
+                ->where('descripcion', $data['descripcion'])
+                ->where('estado_id', '!=', 2)
+                ->exists();
 
-    } catch (\Exception $e) {
-        return [
-            'success' => false,
-            'errors' => ['exception' => $e->getMessage()]
-        ];
+            if ($existe) {
+                return [
+                    'success' => false,
+                    'errors' => ['conflicto' => 'Ya existe otra serie con este código y descripción']
+                ];
+            }
+
+            // Actualizar la serie
+            $serie->update($data);
+
+            return [
+                'success' => true,
+                'data' => $serie
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'errors' => ['exception' => $e->getMessage()]
+            ];
+        }
     }
-}
-public function updateSerie($id, array $data)
-{
-    $client = new \GuzzleHttp\Client();
+    public function updateSerie($id, array $data)
+    {
+        $client = new \GuzzleHttp\Client();
 
-    try {
-        $response = $client->put(env('API_SERIE_URL') . "/series/{$id}", [
-            'json' => $data,
-        ]);
+        try {
+            $response = $client->put(env('API_SERIE_URL') . "/series/{$id}", [
+                'json' => $data,
+            ]);
 
-        return response()->json(json_decode($response->getBody()->getContents()), $response->getStatusCode());
-    } catch (\GuzzleHttp\Exception\RequestException $e) {
-        $statusCode = $e->getResponse() ? $e->getResponse()->getStatusCode() : 500;
-        $message = $e->getResponse()
-            ? json_decode($e->getResponse()->getBody()->getContents(), true)
-            : ['error' => 'Error de conexión con la API'];
+            return response()->json(json_decode($response->getBody()->getContents()), $response->getStatusCode());
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $statusCode = $e->getResponse() ? $e->getResponse()->getStatusCode() : 500;
+            $message = $e->getResponse()
+                ? json_decode($e->getResponse()->getBody()->getContents(), true)
+                : ['error' => 'Error de conexión con la API'];
 
-        return response()->json($message, $statusCode);
+            return response()->json($message, $statusCode);
+        }
     }
-}
 }

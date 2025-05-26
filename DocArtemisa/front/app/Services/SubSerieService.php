@@ -17,12 +17,13 @@ class SubSerieService extends ApiService
     public function getAll()
     {
         try {
-            $response = $this->get('subSerieAPI');
+            $response = $this->get('subSerieAPI?per_page=1000');
             return $this->successResponse($response->object());
         } catch (RequestException $e) {
             return $this->handleApiError($e);
         }
     }
+
 
     public function getSerieById(int $id)
     {

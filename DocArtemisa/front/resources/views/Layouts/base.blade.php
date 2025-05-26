@@ -45,7 +45,6 @@
                             <li>
                                 <a class="dropdown-item" href="{{ route('SerieWeb.index') }}">Serie Individual</a>
                             </li>
-             
                             <li>
                                 <a class="dropdown-item" href="{{ route('SerieWeb.seriescarguemasiva') }}">Cargue Masivo</a>
                                 <!-- Aquí pondrás la ruta más adelante -->
@@ -62,7 +61,7 @@
     </nav>
 
     <!-- Contenido dinámico -->
-    <div class="container text-dark">
+    <div class="container-fluid mt-4 text-dark">
         @yield('content')
     </div>
 

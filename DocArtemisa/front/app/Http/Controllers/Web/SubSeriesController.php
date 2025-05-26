@@ -5,25 +5,36 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\SubSerieService;
+use App\Services\SerieService;
+
 use Illuminate\Support\Facades\Validator;
 
 class SubSeriesController extends Controller
 {
 
     protected $subSerieService;
+    protected $serieService;
 
     public function __construct(
-        SubSerieService $subSerieService
+        SubSerieService $subSerieService,
+        SerieService $serieService  
+
     ) {
         $this->subSerieService = $subSerieService;
+        $this->serieService = $serieService;
     }
 
-    public function index(SubSerieService $subSerieService)
+    public function index()
     {
-        $response = $subSerieService->getAll();
-        $subSeries = empty($response->getData()->data) ? [] : (object)$response->getData()->data->data;
+        $response = $this->subSerieService->getAll();
+        $subSeries = empty($response->getData()->data) ? [] : (object)$response->getData()->data->data->data;
+
+        $response = $this->serieService->getAllActive();
+        $series = empty($response->getData()->data) ? [] : (object)$response->getData()->data->actas;
+
+        //dd($response->getData()->data->actas);
         $estados = $this->subSerieService->getEstados();
-        return view('SubSerieWeb.index', compact('subSeries' , 'estados'));
+        return view('SubSerieWeb.index', compact('subSeries' , 'estados' , 'series'));
     }
 
     public function store(Request $request)
@@ -96,7 +107,7 @@ class SubSeriesController extends Controller
 
     public function destroy($id)
 {
-    $response = $this->serieService->deleteSerie($id);
+    $response = $this->subSerieService->deleteSerie($id);
     $data = $response->getData(true); // Convierte JsonResponse a array
 
     if (!isset($data['status']) || $data['status'] !== 200) {
@@ -113,7 +124,7 @@ public function update(Request $request, $id)
         'fechainicio', 'fechafin', 'estado_id'
     ]);
 
-    $response = $this->serieService->updateSerie($id, $data);
+    $response = $this->subSerieService->updateSerie($id, $data);
 
     if ($response['status'] === 200) {
         return redirect()->route('SerieWeb.index')->with('success', $response['mensaje']);
@@ -123,16 +134,16 @@ public function update(Request $request, $id)
 }
 
 
-public function create()
+/*public function create()
 {
-    $this->serieService->getEstados(); // Verifica qué trae el endpoint
+    $this->subSerieService->getEstados(); // Verifica qué trae el endpoint
     // return view(...); // Puedes comentarlo temporalmente
-}
+}*/
 
 public function edit($id)
 {
-    $serie = $this->serieService->getSerieById($id)->getData()->data->serie;
-    $estados = $this->serieService->getEstados();
+    $serie = $this->subSerieService->getSerieById($id)->getData()->data->serie;
+    $estados = $this->subSerieService->getEstados();
 
     return view('SerieWeb.edit', compact('serie', 'estados'));
 }

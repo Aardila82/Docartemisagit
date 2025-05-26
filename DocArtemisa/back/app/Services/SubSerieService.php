@@ -23,17 +23,51 @@ class SubSerieService
         $this->subSeriesCargueMasivaService = $subSeriesCargueMasivaService;
     }
 
-    public function getAll()
+    public function getAll($params)
     {
-        //$perPage = $request->get('per_page', 10); // Se puede pasar por la URL
         try {
-            $data = SubSerieVersionModel::with(['estado', 'serieVersion'])->get();
+            $validator = Validator::make($params, [
+                'estado_id' => 'sometimes|integer',
+                'per_page' => 'sometimes|integer|min:1|max:1000',
+                'page' => 'sometimes|integer|min:1'
+            ]);
+
+            if ($validator->fails()) {
+                return [
+                    'data' => [],
+                    'errors' => $validator->errors(),
+                    'status' => 422
+                ];
+            }
+            $validated = $validator->validated();
+
+            $query = SubSerieVersionModel::with(['estado', 'serieVersion']);
+
+            // Aplicar filtros
+            if (!empty($params['estado_id'])) {
+                $query->where('estado_id', $params['estado_id']);
+            }
+
+            // Paginación (10 por defecto)
+            $perPage = $validated['per_page'] ?? 10;
+            $data = $query->paginate($perPage);
+
             return [
-                'data' => $data,
+                'data' => [
+                    'data' => $data->items(),
+                    'meta' => [
+                        'total' => $data->total(),
+                        'per_page' => $data->perPage(),
+                        'current_page' => $data->currentPage(),
+                        'last_page' => $data->lastPage(),
+                        'from' => $data->firstItem(),
+                        'to' => $data->lastItem()
+                    ]
+
+                ],
                 'errors' => [],
                 'status' => 500
-            ];            
-            return response()->json($data);
+            ];
         } catch (\Exception $e) {
 
             return [
@@ -44,15 +78,17 @@ class SubSerieService
         }
     }
 
-    public function show($id){
-                try {
+    public function show($id)
+    {
+        try {
+
             $data = SubSerieVersionModel::find($id);
 
             return [
                 'data' => $data,
                 'errors' => [],
                 'status' => 500
-            ];            
+            ];
             return response()->json($data);
         } catch (\Exception $e) {
 

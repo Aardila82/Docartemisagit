@@ -25,6 +25,17 @@ class SerieService extends ApiService
         }
     }
 
+    public function getAllActive()
+    {
+        try {
+            $response = $this->get('serieAPI?per_page=1000&estado_id=1');
+            return $this->successResponse($response->object());
+        } catch (RequestException $e) {
+            return $this->handleApiError($e);
+        }
+    }
+
+
     public function getSerieById(int $id)
     {
         try {

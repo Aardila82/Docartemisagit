@@ -1,7 +1,7 @@
 @extends('layouts.base')
 
 @section('content')
-<div class="container">
+<div>
   <h1>Listado de Sub Series</h1>
 
   <!-- Botón para abrir el modal -->
@@ -147,9 +147,15 @@
 
           <div class="modal-body row">
             <div class="col-md-6 mb-3">
-              <label for="id_codigo_serie" class="form-label">Serie (ID)</label>
-              <input type="number" class="form-control" id="id_codigo_serie" name="id_codigo_serie" required>
+              <label for="id_codigo_serie" class="form-label">Serie</label>
+              <select class="form-select" id="id_codigo_serie" name="id_codigo_serie" required>
+                <option value="">Seleccione una serie</option>
+                @foreach ($series as $serie)
+                <option value="{{ $serie->id }}">{{ $serie->codigo }} - {{ $serie->descripcion }}</option>
+                @endforeach
+              </select>
             </div>
+
 
             <div class="col-md-6 mb-3">
               <label for="codigo_subserie" class="form-label">Código Subserie</label>

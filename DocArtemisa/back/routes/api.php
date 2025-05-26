@@ -28,8 +28,6 @@ Route::post('/serieMasivaAPI', [SerieControllerApi::class, 'importFromCSV']);
 Route::get('/SeriesCargueMasivaAPI', [SeriesCargueMasivaControllerApi::class, 'getAll']);
 Route::post('/SeriesCargueMasivaAPI', [SeriesCargueMasivaControllerApi::class, 'store']);
 
-
-
 //=== Procesos para Sub Serie ==========
 Route::get('/subSerieAPI',[SubSerieVersionControllerApi::class, 'index']);
 Route::post('/subSerieAPI', [SubSerieVersionControllerApi::class, 'store']);
@@ -42,8 +40,4 @@ Route::post('/subSerieMasivaAPI', [SubSeriesCargueMasivaControllerApi::class, 'i
 Route::get('/subSeriesCargueMasivaAPI', [SubSeriesCargueMasivaControllerApi::class, 'getAll']);
 Route::post('/subSeriesCargueMasivaAPI', [SubSeriesCargueMasivaControllerApi::class, 'store']);
 
-
-
 Route::get('/estadoAPI', [EstadoControllerApi::class, 'index']);
-
-
