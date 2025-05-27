@@ -141,8 +141,10 @@ public function edit($id)
     $serie = $this->serieService->getSerieById($id)->getData()->data->serie;
     $estados = $this->serieService->getEstados();
 
-    return view('SerieWeb.edit', compact('serie', 'estados'));
+    return view('serieWeb.edit', compact('serie', 'estados'));
 }
+
+
 
 
 }
