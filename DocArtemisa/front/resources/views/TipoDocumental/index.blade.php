@@ -129,9 +129,9 @@
       <td>Sí</td>
       <td>registrado</td>
       <td>
-        <button class="btn btn-sm btn-warning" title="Editar">
-          <i class="bi bi-pencil-square"></i>
-        </button>
+        <a href="{{ route('tipoDocumental.edit', ['codigo' => '001']) }}" class="btn btn-sm btn-warning" title="Editar">
+            <i class="bi bi-pencil-square"></i>
+        </a>
         <button class="btn btn-sm btn-danger" title="Eliminar">
           <i class="bi bi-trash-fill"></i>
         </button>

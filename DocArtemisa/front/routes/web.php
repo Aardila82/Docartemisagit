@@ -50,3 +50,4 @@ Route::put('/subSeriesWeb/{id}', [SubSeriesController::class, 'update'])->name('
 Route::get('/subseries-cargue-masiva', [SubSeriesCargueMasivaController::class, 'index'])->name('SubSerieWeb.seriesCargueMasiva');
 
 Route::get('/tipo-documental', [TipoDocumentalController::class, 'index'])->name('tipo_documental.index');
+Route::get('/tipo-documental/{codigo}/edit', [App\Http\Controllers\Web\TipoDocumentalController::class, 'edit'])->name('tipoDocumental.edit');
