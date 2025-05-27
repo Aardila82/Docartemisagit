@@ -113,7 +113,7 @@ class SubSerieService extends ApiService
     {
         try {
             $response = $this->get('estadoAPI');
-            
+
             return $response->json(); // Retorna los datos sin detener ejecución
         } catch (RequestException $e) {
             return $this->handleApiError($e);

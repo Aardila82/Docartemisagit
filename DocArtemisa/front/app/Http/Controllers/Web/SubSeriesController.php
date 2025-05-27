@@ -136,24 +136,34 @@ class SubSeriesController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $data = $request->only([
-            'idversion',
-            'codigo',
-            'descripcion',
-            'fechainicio',
-            'fechafin',
-            'estado_id'
-        ]);
+{
+    $validatedData = $request->validate([
+        'id_codigo_serie' => 'required|string|max:255',
+        'codigo_subserie' => 'required|string|max:255',
+        'version' => 'required|string|max:50',
+        'descripcion' => 'required|string',
+        'fecha_inicio' => 'required|date',
+        'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
+        'archivo_gestion' => 'sometimes|boolean',
+        'archivo_central' => 'sometimes|boolean',
+        'conservacion_total' => 'sometimes|boolean',
+        'eliminacion' => 'sometimes|boolean',
+        'microfilmacion' => 'sometimes|boolean',
+        'seleccion' => 'sometimes|boolean',
+        'procedimiento' => 'nullable|string',
+        'estado_id' => 'required|integer',
+    ]);
 
-        $response = $this->subSerieService->updateSerie($id, $data);
+    // Llama al servicio para actualizar la subserie
+    $service = new \App\Services\SubSerieService();
+    $result = $service->updateSerie($id, $validatedData);
 
-        if ($response['status'] === 200) {
-            return redirect()->route('SerieWeb.index')->with('success', $response['mensaje']);
-        }
-
-        return back()->withErrors(['error' => $response['mensaje']]);
+    if ($result['status'] == 200) {
+        return redirect()->route('SubSerieWeb.index')->with('success', $result['mensaje']);
+    } else {
+        return back()->withErrors(['error' => $result['mensaje']])->withInput();
     }
+}
 
 
 

@@ -41,3 +41,4 @@ Route::get('/subSeriesWeb/masiva/exportar', [SubSeriesController::class, 'export
 Route::post('/subSeriesWeb/subir', [SubSeriesController::class, 'subir'])->name('SubSerieWeb.subir');
 Route::get('/subSeriesWeb/masiva/seriesCargueMasiva', [SubSeriesCargueMasivaController::class, 'getAll'])->name('SubSerieWeb.seriescarguemasiva');
 
+Route::put('/subSeriesWeb/{id}', [SubSeriesController::class, 'update'])->name('SubSerieWeb.update');
