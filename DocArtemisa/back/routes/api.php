@@ -41,3 +41,4 @@ Route::get('/subSeriesCargueMasivaAPI', [SubSeriesCargueMasivaControllerApi::cla
 Route::post('/subSeriesCargueMasivaAPI', [SubSeriesCargueMasivaControllerApi::class, 'store']);
 
 Route::get('/estadoAPI', [EstadoControllerApi::class, 'index']);
+
