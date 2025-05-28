@@ -42,16 +42,22 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($data as $item)
             <tr>
-                <td>{{ $item->cantidad_registros }}</td>
-                <td>{{ $item->nombre_archivo }}</td>
-                <td>{{ $item->nombre_usuario }}</td>
-                <td>{{ number_format($item->peso / 1024, 2) }} MB</td> <!-- Convertir KB a MB -->
-                <td>{{ $item->mensaje_error }}</td>
-                <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</td>
-            </tr>
-            @endforeach
+    <td>120</td>
+    <td>archivo_1.csv</td>
+    <td>alexander</td>
+    <td>{{ number_format(2048 / 1024, 2) }} MB</td>
+    <td>Sin errores</td>
+    <td>{{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</td>
+</tr>
+<tr>
+    <td>85</td>
+    <td>archivo_2.csv</td>
+    <td>usuario_demo</td>
+    <td>{{ number_format(1024 / 1024, 2) }} MB</td>
+    <td>Faltan columnas</td>
+    <td>{{ \Carbon\Carbon::now()->subDay()->format('d/m/Y H:i') }}</td>
+</tr>
         </tbody>
     </table>
 </div>

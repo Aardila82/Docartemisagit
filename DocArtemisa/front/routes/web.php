@@ -2,10 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\SeriesController;
-use App\Http\Controllers\Web\SeriesCargueMasivaController;
-
 use App\Http\Controllers\Web\SubSeriesController;
+
+use App\Http\Controllers\Web\TipoDocumentalController;
+use App\Http\Controllers\Web\SeriesCargueMasivaController;
 use App\Http\Controllers\Web\SubSeriesCargueMasivaController;
+
 
 
 Route::get('/seriesWeb', [SeriesController::class, 'index'])->name('SerieWeb.index');
@@ -25,6 +27,8 @@ Route::post('/seriesWeb/subir', [SeriesController::class, 'subir'])->name('serie
 
 // Masiva
 Route::get('/seriesWeb/masiva/seriesCargueMasiva', [SeriesCargueMasivaController::class, 'getAll'])->name('SerieWeb.seriescarguemasiva');
+//Route::get('/subSeriesWeb/masiva/seriesCargueMasiva', [SubSeriesCargueMasivaController::class, 'getAll'])->name('SubSerieWeb.seriescarguemasiva');
+Route::get('/seriesWeb/masiva/detalle/{id}', [SeriesController::class, 'masiva'])->name('SerieWeb.masiva');
 
 //SubSerie
 Route::get('/subSeriesWeb', [SubSeriesController::class, 'index'])->name('SubSerieWeb.index');
@@ -37,6 +41,11 @@ Route::get('/subSeriesWeb/masiva/detalle/{id}', [SubSeriesController::class, 'ma
 Route::post('/subSeriesWeb/masiva/procesarMasiva', [SubSeriesController::class, 'procesarMasiva'])->name('SubSerieWeb.procesarMasiva');
 Route::get('/subSeriesWeb/masiva/exportar', [SubSeriesController::class, 'exportarMasiva'])->name('SubSerieWeb.exportar');
 Route::post('/subSeriesWeb/subir', [SubSeriesController::class, 'subir'])->name('SubSerieWeb.subir');
-Route::get('/subSeriesWeb/masiva/seriesCargueMasiva', [SubSeriesCargueMasivaController::class, 'getAll'])->name('SubSerieWeb.seriescarguemasiva');
+
 
 Route::put('/subSeriesWeb/{id}', [SubSeriesController::class, 'update'])->name('SubSerieWeb.update');
+
+Route::get('/subseries-cargue-masiva', [SubSeriesCargueMasivaController::class, 'index'])->name('SubSerieWeb.seriesCargueMasiva');
+
+Route::get('/tipo-documental', [TipoDocumentalController::class, 'index'])->name('tipo_documental.index');
+Route::get('/tipo-documental/{codigo}/edit', [App\Http\Controllers\Web\TipoDocumentalController::class, 'edit'])->name('tipoDocumental.edit');
