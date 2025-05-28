@@ -7,6 +7,7 @@ use App\Http\Controllers\API\SeriesCargueMasivaControllerAPi;
 use App\Http\Controllers\API\EstadoControllerApi;
 use App\Http\Controllers\Api\SubSerieVersionControllerApi;
 use App\Http\Controllers\API\SubSeriesCargueMasivaControllerApi;
+use App\Http\Controllers\TipoDocumental\TipoDocumentalController;
 
 //=== Procesos para el acta ==========
 Route::get ('/actaAPI',[ActaControllerApi::class, 'index']);
@@ -41,4 +42,12 @@ Route::get('/subSeriesCargueMasivaAPI', [SubSeriesCargueMasivaControllerApi::cla
 Route::post('/subSeriesCargueMasivaAPI', [SubSeriesCargueMasivaControllerApi::class, 'store']);
 
 Route::get('/estadoAPI', [EstadoControllerApi::class, 'index']);
+
+Route::get('/tipodocumental', [TipoDocumentalController::class, 'index']);
+Route::post('/tipodocumental', [TipoDocumentalController::class, 'store']);
+Route::get('/tipodocumental/{id}', [TipoDocumentalController::class, 'show']);
+Route::put('/tipodocumental/{id}', [TipoDocumentalController::class, 'update']);
+Route::delete('/tipodocumental/{id}', [TipoDocumentalController::class, 'destroy']);
+
+
 
