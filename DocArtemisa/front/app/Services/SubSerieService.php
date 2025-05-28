@@ -43,8 +43,6 @@ class SubSerieService extends ApiService
 
             $statusCode = $body->status ?? 200;
             $mensaje = !empty($body->errors) ? implode("<br>" , $body->errors) : "";
-            //dd($data);
-
             return $this->successResponse($mensaje, $statusCode);
         } catch (RequestException $e) {
             return $this->handleApiError($e);

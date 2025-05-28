@@ -17,8 +17,7 @@ Route::put('/seriesWeb/{id}', [SeriesController::class, 'update'])->name('SerieW
 //Route::delete('/seriesWeb/{id}', [SeriesController::class, 'destroy'])->name('SerieWeb.destroy');
 Route::delete('seriesWeb/{id}', [SeriesController::class, 'destroy'])->name('SerieWeb.destroy');
 
-
-
+Route::get('/seriesWeb/masiva/detalle/{id}', [SeriesController::class, 'masiva'])->name('SerieWeb.masiva');
 
 // Procesar archivo CSV subido
 Route::post('/seriesWeb/masiva/procesarMasiva', [SeriesController::class, 'procesarMasiva'])->name('SerieWeb.procesarMasiva');
@@ -28,9 +27,8 @@ Route::post('/seriesWeb/subir', [SeriesController::class, 'subir'])->name('serie
 
 // Masiva
 Route::get('/seriesWeb/masiva/seriesCargueMasiva', [SeriesCargueMasivaController::class, 'getAll'])->name('SerieWeb.seriescarguemasiva');
-//Route::get('/subSeriesWeb/masiva/seriesCargueMasiva', [SubSeriesCargueMasivaController::class, 'getAll'])->name('SubSerieWeb.seriescarguemasiva');
+Route::get('/subSeriesWeb/masiva/seriesCargueMasiva', [SubSeriesCargueMasivaController::class, 'getAll'])->name('SubSerieWeb.seriescarguemasiva');
 Route::get('/seriesWeb/masiva/detalle/{id}', [SeriesController::class, 'masiva'])->name('SerieWeb.masiva');
-
 
 //SubSerie
 Route::get('/subSeriesWeb', [SubSeriesController::class, 'index'])->name('SubSerieWeb.index');

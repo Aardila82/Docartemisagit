@@ -3,29 +3,17 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Services\SubSeriesCargueMasivaService;
 
 class SubSeriesCargueMasivaController extends Controller
 {
-    public function index()
+
+    public function getAll(SubSeriesCargueMasivaService $subSeriesCargueMasivaService)
     {
-        // Aquí puedes pasar datos reales o quemados si quieres
-        return view('SubSerieWeb.seriesCargueMasiva');
+        $response = $subSeriesCargueMasivaService->getAll();
+        $data = empty($response->getData()->data) ? [] : (object)$response->getData()->data->data;
+        return view('SubSerieWeb.seriesCargueMasiva', compact('data'));
     }
 
-    public function edit($codigo)
-{
-    // Datos quemados para prueba
-    $tipoDocumental = [
-        'codigo' => $codigo,
-        'descripcion' => 'Actas de reunión',
-        'termino' => 12,
-        'numeracion' => 'Sí',
-        'radicacion' => 'No',
-        'estado' => 'registrado',
-    ];
-
-    return view('TipoDocumental.edit', compact('tipoDocumental'));
-}
 
 }

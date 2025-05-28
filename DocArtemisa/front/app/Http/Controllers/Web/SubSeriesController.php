@@ -81,7 +81,7 @@ class SubSeriesController extends Controller
     }
 
 
-    public function procesarMasiva(SubSerieService $serieService, Request $request)
+    public function procesarMasiva(SubSerieService $subSerieService, Request $request)
     {
         $validator = Validator::make($request->all(), [
             'csv_file' => 'required|file|mimes:csv,txt|max:10240', // 10MB máximo
@@ -93,13 +93,12 @@ class SubSeriesController extends Controller
 
         $file = $request->file('csv_file');
 
-        $response = $serieService->cargarMasivaSeries($file->getRealPath());
+        $response = $subSerieService->cargarMasivaSeries($file->getRealPath());
         $responseData = $response->getData();
-        //var_dump($responseData);
         $mensaje = $responseData->data->mensaje;
         $errors = empty($responseData->data->data->errors) ? [] : $responseData->data->data->errors;
 
-        return view('SerieWeb.procesomasiva', compact('errors', 'mensaje'));
+        return view('SubSerieWeb.procesomasiva', compact('errors', 'mensaje'));
     }
 
     public function cargueMasiva()

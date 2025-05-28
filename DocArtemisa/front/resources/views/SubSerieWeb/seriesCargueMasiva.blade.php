@@ -6,13 +6,13 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <!-- Botón Descargar CSV -->
-        <a href="{{ route('SerieWeb.exportar') }}" class="btn btn-success">
+        <a href="{{ route('SubSerieWeb.exportar') }}" class="btn btn-success">
             <i class="bi bi-download"></i> Descargar CSV
         </a>
 
         <!-- Área de subida de archivos -->
         <div class="file-upload-area">
-            <form action="{{ route('SerieWeb.procesarMasiva') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-wrap align-items-center gap-3 mb-4">
+            <form action="{{ route('SubSerieWeb.procesarMasiva') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-wrap align-items-center gap-3 mb-4">
                 @csrf
 
                 <label for="csv_file" class="btn btn-primary mb-0">
