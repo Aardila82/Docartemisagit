@@ -31,7 +31,7 @@ class TipoDocumentalController extends Controller
         'SGD_TPR_RADICA' => 'nullable|string|max:1',
         'SGD_TPR_ESTADO' => 'nullable|integer',
         'idversion' => 'nullable|numeric',
-        'estado' => 'nullable|string|in:registrado,inactivo',
+        'estado_id' => 'nullable|integer|exists:estados,id',
     ]);
 
     $nuevoRegistro = $this->tipoDocumentalService->store($validatedData);
@@ -60,7 +60,7 @@ public function update(Request $request, $id)
         'SGD_TPR_RADICA' => 'nullable|string|max:1',
         'SGD_TPR_ESTADO' => 'nullable|integer',
         'idversion' => 'nullable|numeric',
-        'estado' => 'nullable|string|in:registrado,inactivo',
+        'estado_id' => 'nullable|integer|exists:estados,id',
     ]);
 
     $registroActualizado = $this->tipoDocumentalService->update($id, $validatedData);
@@ -74,13 +74,12 @@ public function update(Request $request, $id)
 
 public function destroy($id)
 {
-    $resultado = $this->tipoDocumentalService->delete($id);
+    $registro = $this->tipoDocumentalService->delete($id);
 
-    if (!$resultado) {
-        return response()->json(['message' => 'Registro no encontrado'], 404);
-    }
-
-    return response()->json(['message' => 'Registro eliminado correctamente'], 200);
+    return response()->json([
+        'message' => 'Tipo documental inactivado correctamente.',
+        'data' => $registro
+    ]);
 }
 
 

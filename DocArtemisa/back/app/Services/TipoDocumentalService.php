@@ -36,14 +36,11 @@ public function update($id, array $data)
 
 public function delete($id)
 {
-    $registro = TipoDocumental::find($id);
+    $registro = TipoDocumental::findOrFail($id);
+    $registro->estado_id = 2; // Cambia a inactivo
+    $registro->save();
 
-    if (!$registro) {
-        return false;
-    }
-
-    $registro->delete();
-    return true;
+    return $registro;
 }
 
 
