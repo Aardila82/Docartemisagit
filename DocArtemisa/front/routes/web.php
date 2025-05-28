@@ -27,7 +27,7 @@ Route::post('/seriesWeb/subir', [SeriesController::class, 'subir'])->name('serie
 
 // Masiva
 Route::get('/seriesWeb/masiva/seriesCargueMasiva', [SeriesCargueMasivaController::class, 'getAll'])->name('SerieWeb.seriescarguemasiva');
-//Route::get('/subSeriesWeb/masiva/seriesCargueMasiva', [SubSeriesCargueMasivaController::class, 'getAll'])->name('SubSerieWeb.seriescarguemasiva');
+Route::get('/subSeriesWeb/masiva/seriesCargueMasiva', [SubSeriesCargueMasivaController::class, 'getAll'])->name('SubSerieWeb.seriescarguemasiva');
 Route::get('/seriesWeb/masiva/detalle/{id}', [SeriesController::class, 'masiva'])->name('SerieWeb.masiva');
 
 //SubSerie

@@ -62,11 +62,7 @@
                                 <a class="dropdown-item" href="{{ route('SubSerieWeb.index') }}">Sub Serie Individual</a>
                             </li>
                             <li>
-<<<<<<< HEAD
                                 <a class="dropdown-item" href="{{ route('SubSerieWeb.seriescarguemasiva') }}">Cargue Masivo</a>
-=======
-                                <a class="dropdown-item" href="{{ route('SubSerieWeb.seriesCargueMasiva') }}">Cargue Masivo</a>
->>>>>>> f63c973dab772ba4462432497d927f69dcd09400
                                 <!-- Aquí pondrás la ruta más adelante -->
                             </li>
                         </ul>
