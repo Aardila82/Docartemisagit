@@ -97,7 +97,6 @@ class SubSerieService
                 'status' => 500
             ];
         }
-
     }
 
     public function importFromCSV($filePath)
@@ -108,8 +107,8 @@ class SubSerieService
 
             $dataInicial = [
                 'cantidad_registros' => $cantidadRegistros,
-                'nombre_archivo' => File::basename($filePath),
-                'nombre_usuario' => 'ARSUAREZ',
+                'nombre_archivo' => File::name($filePath),
+                'nombre_usuario' => '',
                 'mensaje_error' => '',
                 'peso' => File::size($filePath),
             ];
@@ -154,20 +153,75 @@ class SubSerieService
 
     protected function processRow($row, $rowNumber)
     {
+        //'id_codigo_serie'     => $row[0] ?? null,
+
         $data = [
-            'codigo' => $row[0] ?? null,
-            'descripcion' => $row[1] ?? null,
-            'fechainicio' => $row[2] ?? null,
-            'fechafin' => $row[3] ?? null,
+            'serie_codigo'        => $row[0] ?? null,
+            'serie_descripcion'   => $row[1] ?? null,
+            'codigo_subserie'     => $row[2] ?? null,
+            'descripcion'         => $row[3] ?? null,
+            'fecha_inicio'        => $row[4] ?? null,
+            'fecha_final'         => $row[5] ?? null,
+            'archivo_gestion'     => $row[6] ?? null,
+            'archivo_central'     => $row[7] ?? null,
+            'conservacion_total'  => $row[8] ?? null,
+            'eliminacion'         => $row[9] ?? null,
+            'microfilmacion'      => $row[10] ?? null,
+            'seleccion'           => $row[11] ?? null,
+            'procedimiento'       => $row[12] ?? null,
         ];
 
         // Validar los datos del registro
         $validator = Validator::make($data, [
-            'codigo' => 'required|integer',
-            'descripcion' => 'required|string',
-            'fechainicio' => 'required|date',
-            'fechafin' => 'required|date|after_or_equal:fechainicio',
+            'serie_codigo'        => 'required|integer',
+            'serie_descripcion'   => 'required|required',
+            'codigo_subserie'     => 'required|integer',
+            'descripcion'         => 'required|string|max:255',
+            'fecha_inicio'        => 'required|date',
+            'fecha_final'         => 'required|date|after_or_equal:fecha_inicio',
+
+            'archivo_gestion'     => 'nullable|string|in:si,no',
+            'archivo_central'     => 'nullable|string|in:si,no',
+            'conservacion_total'  => 'nullable|string|in:si,no',
+            'eliminacion'         => 'nullable|string|in:si,no',
+            'microfilmacion'      => 'nullable|string|in:si,no',
+            'seleccion'           => 'nullable|string|in:si,no',
+
+            'procedimiento'       => 'nullable|string|max:1000',
+        ], [
+            'archivo_gestion.in' => 'El campo archivo gestión solo puede tener los valores "si" o "no".',
+            'archivo_central.in' => 'El campo archivo central solo puede tener los valores "si" o "no".',
+            'conservacion_total.in' => 'El campo conservación total solo puede tener los valores "si" o "no".',
+            'eliminacion.in' => 'El campo eliminación solo puede tener los valores "si" o "no".',
+            'microfilmacion.in' => 'El campo microfilmación solo puede tener los valores "si" o "no".',
+            'seleccion.in' => 'El campo selección solo puede tener los valores "si" o "no".',
         ]);
+        //echo "<pre>".print_r($data , true) . "</pre>";
+        $serie = SerieModel::where('codigo', $data['serie_codigo'])
+            ->where('descripcion', $data['serie_descripcion'])
+            ->first();
+
+        if ($serie) {
+            $data["id_codigo_serie"] = $serie->id;
+        } else {
+            return [
+                'success' => false,
+                'error' => [
+                    'row_number' => $rowNumber + 1, // +1 porque el array empieza en 0
+                    'row_data' => $row,
+                    'errors' => ['La serie no existe en la tabla serieversion.'],
+                ]
+            ];
+        }
+
+        $data["archivo_gestion"] =  $this->convertSiNoToBoolean($data["archivo_gestion"]);
+        $data["archivo_central"] =  $this->convertSiNoToBoolean($data["archivo_central"]);
+        $data["conservacion_total"] =  $this->convertSiNoToBoolean($data["conservacion_total"]);
+
+        $data["eliminacion"] =  $this->convertSiNoToBoolean($data["eliminacion"]);
+        $data["microfilmacion"] =  $this->convertSiNoToBoolean($data["microfilmacion"]);
+        $data["seleccion"] =  $this->convertSiNoToBoolean($data["seleccion"]);
+        $data["version"] =  $this->convertSiNoToBoolean(0);
 
         if ($validator->fails()) {
             return [
@@ -181,7 +235,8 @@ class SubSerieService
         }
 
         // Verificar si ya existe una serie con el mismo código y descripción
-        $existe = SubSerieVersionModel::where('codigo', $data['codigo'])
+        /*$existe = SubSerieVersionModel::where('id_codigo_serie', $data['id_codigo_serie'])
+            ->where('codigo_subserie', $data['codigo_subserie'])
             ->where('descripcion', $data['descripcion'])
             ->where('estado_id', '!=', 2)
             ->exists();
@@ -195,11 +250,25 @@ class SubSerieService
                     'errors' => ['conflicto' => 'Ya existe una serie con este código y descripción']
                 ]
             ];
-        }
+        }*/
 
         // Crear el registro
         try {
-            SubSerieVersionModel::create($data);
+            //SubSerieVersionModel::create($data);
+            $result = $this->store($data);
+            //echo "<pre>".print_r($result['errors'] , true)."</pre>";
+            if( !empty($result['errors']) ){
+                return [
+                    'success' => false,
+                    'error' => [
+                        'row_number' => $rowNumber + 1,
+                        'row_data' => $row,
+                        'errors' => $result['errors']
+                    ]
+                ];
+            }
+
+
             return ['success' => true];
         } catch (\Exception $e) {
             return [
@@ -239,7 +308,6 @@ class SubSerieService
             ];
         }
         $validated = $validator->validated();
-
         $duplicado = SubSerieVersionModel::where('id_codigo_serie', $validated['id_codigo_serie'])
             ->where('codigo_subserie', $validated['codigo_subserie'])
             ->where('descripcion', $validated['descripcion'])
@@ -253,8 +321,9 @@ class SubSerieService
             ];
         }
 
-        $serieExiste = SerieModel::find($validated['id_codigo_serie']);
-        if (!$serieExiste) {
+        $existe = SerieModel::where('codigo', $validated['id_codigo_serie'])->first();
+
+        if (!$existe) {
             return [
                 'data' => [],
                 'errors' => ['El id_codigo_serie no existe en la tabla serieversion.'],
@@ -360,5 +429,10 @@ class SubSerieService
                 'status' => 500
             ];
         }
+    }
+
+    protected function convertSiNoToBoolean($value)
+    {
+        return $value === 'si' ? true : false;
     }
 }

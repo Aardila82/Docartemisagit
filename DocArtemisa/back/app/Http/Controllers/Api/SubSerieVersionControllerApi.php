@@ -43,7 +43,6 @@ class SubSerieVersionControllerApi extends Controller
                 'errors' => [$e->getMessage()]
             ], 500);
         }
-
     }
 
 
@@ -67,7 +66,6 @@ class SubSerieVersionControllerApi extends Controller
                 'errors' => [$e->getMessage()]
             ], 500);
         }
-
     }
 
     // Crear un nuevo registro
@@ -150,5 +148,31 @@ class SubSerieVersionControllerApi extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al eliminar el registro', 'details' => $e->getMessage()], 500);
         }
+    }
+
+    public function importFromCSV(Request $request)
+    {
+        // Validar que se haya enviado un archivo
+        $validator = Validator::make($request->all(), [
+            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+                'status' => 400
+            ], 400);
+        }
+
+        // Procesar el archivo con el servicio
+        $results = $this->subSerieService->importFromCSV(
+            $request->file('csv_file')->getRealPath()
+        );
+
+        return response()->json([
+            'mensaje' => 'Importación completada',
+            'data' => $results,
+            'status' => 200
+        ], 200);
     }
 }
