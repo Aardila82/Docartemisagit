@@ -3,29 +3,59 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Services\TipoDocumentalService;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class TipoDocumentalController extends Controller
 {
-    // Mostrar el formulario
-    public function index()
+    protected TipoDocumentalService $service;
+
+    public function __construct(TipoDocumentalService $service)
+    {
+        $this->service = $service;
+    }
+
+    public function index(): View
 {
-    return view('TipoDocumental.index');
+    $tiposDocumentales = $this->service->getAll();
+
+    // Tabla de traducción de estados
+    $estados = [
+        0 => 'Activo',
+        1 => 'Inactivo',
+        2 => 'Archivado',
+    ];
+
+    return view('tipo_documental.index', compact('tiposDocumentales', 'estados'));
 }
 
-public function edit($codigo)
-    {
-        // Datos quemados
-        $tipoDocumental = [
-            'codigo' => $codigo,
-            'descripcion' => 'Actas de reunión',
-            'termino' => 12,
-            'numeracion' => 'Sí',
-            'radicacion' => 'No',
-            'estado' => 'registrado',
-        ];
 
-        return view('TipoDocumental.edit', compact('tipoDocumental'));
+public function store(Request $request): RedirectResponse
+{
+    // Validar los campos que vienen del formulario
+    $validated = $request->validate([
+        'SGD_TPR_CODIGO' => 'required|string',
+        'SGD_TPR_DESCRIP' => 'required|string',
+        'SGD_TPR_TERMINO' => 'required|string',
+        'SGD_TPR_NUMERA' => 'required|string',
+        'SGD_TPR_RADICA' => 'required|string',
+        'SGD_TPR_ESTADO' => 'required|string',
+        'idversion'       => 'required|string',
+        'estado_id'       => 'required|integer',
+    ]);
+
+    // Enviar al servicio para que haga el POST a la API externa
+    $response = $this->service->create($validated);
+
+    // Verificar si hubo error
+    if (isset($response['error'])) {
+        return redirect()->route('tipos-documentales.index')->with('error', $response['error']);
     }
+
+    // Redirigir con mensaje de éxito
+    return redirect()->route('tipos-documentales.index')->with('success', 'Tipo documental creado correctamente.');
+}
 
 }

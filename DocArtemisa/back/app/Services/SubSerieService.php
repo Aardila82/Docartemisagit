@@ -39,6 +39,7 @@ class SubSerieService
                     'status' => 422
                 ];
             }
+
             $validated = $validator->validated();
 
             $query = SubSerieVersionModel::with(['estado', 'serieVersion']);
