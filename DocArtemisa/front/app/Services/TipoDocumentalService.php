@@ -76,20 +76,14 @@ public function update($id, array $data)
     }
 }
 
-public function cambiarEstado($id, int $nuevoEstado): array
+public function cambiarEstado($id)
 {
     try {
-        $response = Http::put($this->urlBase . 'tipodocumental/' . $id, [
-            'estado_id' => $nuevoEstado
-        ]);
+        $response = Http::delete($this->urlBase . 'tipodocumental/' . $id);
 
-        if ($response->successful()) {
-            return $response->json();
-        }
-
-        return ['error' => 'Error al cambiar estado: ' . $response->body()];
+        return $response->json();
     } catch (\Exception $e) {
-        return ['error' => 'Excepción al cambiar estado: ' . $e->getMessage()];
+        return ['error' => 'Error al cambiar el estado: ' . $e->getMessage()];
     }
 }
 

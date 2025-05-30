@@ -24,8 +24,8 @@ class TipoDocumentalController extends Controller
     // Tabla de traducción de estados
     $estados = [
         0 => 'Activo',
-        1 => 'Inactivo',
-        2 => 'Archivado',
+        1 => 'Registrado',
+        2 => 'Inactivo',
     ];
 
     return view('tipo_documental.index', compact('tiposDocumentales', 'estados'));
@@ -67,9 +67,9 @@ public function edit($id)
     }
 
     $estados = [
-        1 => 'Activo',
-        2 => 'Inactivo',
-        3 => 'Archivado'
+        0 => 'Activo',
+        1 => 'Registrado',
+        2 => 'Inactivo'
     ];
 
     // **Fíjate que aquí la variable se llama $tipoDocumental**
@@ -96,24 +96,17 @@ public function update(Request $request, $id)
     return redirect()->route('tipos-documentales.index')->with('success', 'Tipo documental actualizado correctamente');
 }
 
-public function cambiarEstado($id): RedirectResponse
+public function cambiarEstado($id)
 {
-    $tipo = $this->service->findById($id);
-
-    if (!$tipo) {
-        return redirect()->route('tipos-documentales.index')->with('error', 'Tipo Documental no encontrado');
-    }
-
-    $nuevoEstado = $tipo['estado_id'] == 1 ? 2 : 1; // Alterna entre activo (1) e inactivo (2)
-
-    $response = $this->service->update($id, ['estado_id' => $nuevoEstado]);
+    $response = $this->service->cambiarEstado($id);
 
     if (isset($response['error'])) {
         return redirect()->route('tipos-documentales.index')->with('error', $response['error']);
     }
 
-    return redirect()->route('tipos-documentales.index')->with('success', 'Estado actualizado correctamente.');
+    return redirect()->route('tipos-documentales.index')->with('success', 'Estado cambiado correctamente.');
 }
+
 
 
 

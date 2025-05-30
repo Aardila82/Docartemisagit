@@ -105,12 +105,19 @@
                     </a>
                     <!-- Botón de cambiar estado -->
     <form action="{{ route('tipos-documentales.cambiar-estado', $tipo['ID']) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('¿Deseas cambiar el estado de este tipo documental?');">
-        @csrf
-        @method('PATCH')
-        <button type="submit" class="btn btn-sm {{ $tipo['estado_id'] == 1 ? 'btn-danger' : 'btn-success' }}">
-            <i class="fas fa-toggle-{{ $tipo['estado_id'] == 1 ? 'off' : 'on' }}"></i>
-        </button>
-    </form>
+    @csrf
+    @method('DELETE')
+    @php
+    $estadoId = $tipo['estado_id'];
+    $esActivoORegistrado = in_array($estadoId, [0, 1]);
+    $claseBoton = $esActivoORegistrado ? 'btn-success' : 'btn-danger';
+    $icono = $esActivoORegistrado ? 'toggle-on' : 'toggle-off';
+@endphp
+
+<button type="submit" class="btn btn-sm {{ $claseBoton }}">
+    <i class="fas fa-{{ $icono }}"></i>
+</button>
+</form>
                 </td>
                 </tr>
             @endforeach
