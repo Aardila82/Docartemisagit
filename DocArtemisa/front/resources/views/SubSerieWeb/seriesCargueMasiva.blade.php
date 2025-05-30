@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2 class="mb-4">Cargue Masivo</h2>
+    <h2 class="mb-4">Cargue Masivo SubSerie</h2>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <!-- Botón Descargar CSV -->
@@ -42,22 +42,18 @@
             </tr>
         </thead>
         <tbody>
+            @foreach($data as $subSerie)
             <tr>
-    <td>120</td>
-    <td>archivo_1.csv</td>
-    <td>alexander</td>
-    <td>{{ number_format(2048 / 1024, 2) }} MB</td>
-    <td>Sin errores</td>
-    <td>{{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</td>
-</tr>
-<tr>
-    <td>85</td>
-    <td>archivo_2.csv</td>
-    <td>usuario_demo</td>
-    <td>{{ number_format(1024 / 1024, 2) }} MB</td>
-    <td>Faltan columnas</td>
-    <td>{{ \Carbon\Carbon::now()->subDay()->format('d/m/Y H:i') }}</td>
-</tr>
+                <td>{{ $subSerie->cantidad_registros }}</td>
+                <td>{{ $subSerie->nombre_archivo }}</td>
+                <td>{{ $subSerie->nombre_usuario }}</td>
+
+                <td>{{ $subSerie->peso }}</td>
+                <td>{{ $subSerie->mensaje_error }}</td>
+                <td>{{ \Carbon\Carbon::parse($subSerie->created_at)->format('d/m/Y H:i') }}</td>
+            </tr>
+            @endforeach
+
         </tbody>
     </table>
 </div>

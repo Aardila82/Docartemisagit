@@ -103,19 +103,21 @@ class SubSerieService
     public function importFromCSV($filePath)
     {
         try {
+            $nombreOriginal = $filePath->getClientOriginalName();
+
+            $filePath = $filePath->getRealPath();
             $file = file($filePath);
             $cantidadRegistros = count($file);
 
             $dataInicial = [
                 'cantidad_registros' => $cantidadRegistros,
-                'nombre_archivo' => File::name($filePath),
+                'nombre_archivo' => $nombreOriginal,
                 'nombre_usuario' => '',
                 'mensaje_error' => '',
                 'peso' => File::size($filePath),
             ];
 
-            $this->subSeriesCargueMasivaService->store((object)$dataInicial);
-
+            $subSerie = $this->subSeriesCargueMasivaService->store((object)$dataInicial);
             // Leer el archivo CSV
             $csvData = array_map('str_getcsv', $file);
 

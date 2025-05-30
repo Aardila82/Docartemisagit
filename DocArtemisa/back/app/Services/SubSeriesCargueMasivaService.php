@@ -15,14 +15,12 @@ class SubSeriesCargueMasivaService
             'peso' => $data->peso,
             'mensaje_error' => $data->mensaje_error
         ]);
-
         return $archivoMasivo->id;
     }
 
-    public function getAll($perPage = 10)
-{
-    return SubSeriesCargueMasivaModel::paginate($perPage);
-}
-
-
+    public function getAll($perPage = 1000)
+    {
+        $data = SubSeriesCargueMasivaModel::orderBy('id', 'desc')->get();
+        return $data;
+    }
 }

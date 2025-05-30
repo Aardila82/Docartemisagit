@@ -41,6 +41,7 @@ Route::post('/subSerieMasivaAPI', [SubSerieVersionControllerApi::class, 'importF
 Route::get('/subSeriesCargueMasivaAPI', [SubSeriesCargueMasivaControllerApi::class, 'getAll']);
 Route::post('/subSeriesCargueMasivaAPI', [SubSeriesCargueMasivaControllerApi::class, 'store']);
 
+
 Route::get('/estadoAPI', [EstadoControllerApi::class, 'index']);
 
 Route::get('/tipodocumental', [TipoDocumentalController::class, 'index']);

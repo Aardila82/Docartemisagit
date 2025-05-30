@@ -166,7 +166,7 @@ class SubSerieVersionControllerApi extends Controller
 
         // Procesar el archivo con el servicio
         $results = $this->subSerieService->importFromCSV(
-            $request->file('csv_file')->getRealPath()
+            $request->file('csv_file')
         );
 
         return response()->json([
