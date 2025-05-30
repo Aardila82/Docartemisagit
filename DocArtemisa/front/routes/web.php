@@ -49,4 +49,8 @@ Route::get('/subseries-cargue-masiva', [SubSeriesCargueMasivaController::class, 
 
 Route::get('/tipos-documentales', [TipoDocumentalController::class, 'index'])->name('tipos-documentales.index');
 Route::post('/tipos-documentales', [TipoDocumentalController::class, 'store'])->name('tipos-documentales.store');
-Route::get('/tipo-documental/{codigo}/edit', [App\Http\Controllers\Web\TipoDocumentalController::class, 'edit'])->name('tipoDocumental.edit');
+Route::get('/tipos-documentales/{id}/edit', [TipoDocumentalController::class, 'edit'])->name('tipos-documentales.edit');
+Route::put('/tipos-documentales/{id}', [TipoDocumentalController::class, 'update'])->name('tipos-documentales.update');
+Route::patch('/tipos-documentales/{id}/cambiar-estado', [TipoDocumentalController::class, 'cambiarEstado'])->name('tipos-documentales.cambiar-estado');
+
+

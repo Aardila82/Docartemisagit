@@ -82,6 +82,15 @@ public function destroy($id)
     ]);
 }
 
+public function edit($id)
+{
+    $tipoDocumental = $this->tipoDocumentalService->findById($id);
+    if (!$tipoDocumental) {
+        abort(404, "Registro no encontrado");
+    }
+    return view('tipodocumental.edit', compact('tipoDocumental'));
+}
+
 
 
 

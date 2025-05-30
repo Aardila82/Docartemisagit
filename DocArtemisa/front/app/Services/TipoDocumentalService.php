@@ -46,6 +46,54 @@ public function create(array $data): array
     }
 }
 
+public function findById($id): array
+{
+    try {
+        $response = Http::get($this->urlBase . "tipodocumental/{$id}");
+
+        if ($response->successful()) {
+            return $response->json(); // Devuelve el registro
+        }
+
+        return ['error' => 'Error al obtener el tipo documental'];
+    } catch (\Exception $e) {
+        return ['error' => 'Excepción al obtener tipo documental: ' . $e->getMessage()];
+    }
+}
+
+public function update($id, array $data)
+{
+    try {
+        $response = Http::put($this->urlBase . 'tipodocumental/' . $id, $data);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return null;
+    } catch (\Exception $e) {
+        return null;
+    }
+}
+
+public function cambiarEstado($id, int $nuevoEstado): array
+{
+    try {
+        $response = Http::put($this->urlBase . 'tipodocumental/' . $id, [
+            'estado_id' => $nuevoEstado
+        ]);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return ['error' => 'Error al cambiar estado: ' . $response->body()];
+    } catch (\Exception $e) {
+        return ['error' => 'Excepción al cambiar estado: ' . $e->getMessage()];
+    }
+}
+
+
 
 
 

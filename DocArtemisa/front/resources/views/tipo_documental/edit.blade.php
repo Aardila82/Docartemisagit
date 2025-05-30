@@ -1,51 +1,52 @@
 @extends('layouts.base')
 
 @section('content')
-<div class="container mt-4">
-  <h2>Editar Tipo Documental</h2>
+    <h1>Editar Tipo Documental</h1>
 
-  <form>
-    <div class="mb-3">
-      <label class="form-label">Código</label>
-      <input type="text" class="form-control" value="{{ $tipoDocumental['codigo'] }}" readonly>
+    <form action="{{ route('tipos-documentales.update', $tipoDocumental['ID']) }}" method="POST"> {{-- Aquí por ahora no hay acción --}}
+        @csrf
+        @method('PUT')
+
+        <div class="mb-3">
+        <label>Código</label>
+        <input type="text" name="SGD_TPR_CODIGO" class="form-control" value="{{ $tipoDocumental['SGD_TPR_CODIGO'] }}" required>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Descripción</label>
-      <input type="text" class="form-control" value="{{ $tipoDocumental['descripcion'] }}">
+        <label>Descripción</label>
+        <input type="text" name="SGD_TPR_DESCRIP" class="form-control" value="{{ $tipoDocumental['SGD_TPR_DESCRIP'] }}" required>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Término</label>
-      <input type="number" class="form-control" value="{{ $tipoDocumental['termino'] }}">
+        <label>Término</label>
+        <input type="number" name="SGD_TPR_TERMINO" class="form-control" value="{{ $tipoDocumental['SGD_TPR_TERMINO'] }}" required>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Numeración</label>
-      <select class="form-select">
-        <option {{ $tipoDocumental['numeracion'] === 'Sí' ? 'selected' : '' }}>Sí</option>
-        <option {{ $tipoDocumental['numeracion'] === 'No' ? 'selected' : '' }}>No</option>
-      </select>
+        <label>¿Numeración?</label>
+        <select name="SGD_TPR_NUMERA" class="form-select" required>
+            <option value="S" @if($tipoDocumental['SGD_TPR_NUMERA'] == 'S') selected @endif>Sí</option>
+            <option value="N" @if($tipoDocumental['SGD_TPR_NUMERA'] == 'N') selected @endif>No</option>
+        </select>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Radicación</label>
-      <select class="form-select">
-        <option {{ $tipoDocumental['radicacion'] === 'Sí' ? 'selected' : '' }}>Sí</option>
-        <option {{ $tipoDocumental['radicacion'] === 'No' ? 'selected' : '' }}>No</option>
-      </select>
+        <label>¿Radicación?</label>
+        <select name="SGD_TPR_RADICA" class="form-select" required>
+            <option value="S" @if($tipoDocumental['SGD_TPR_RADICA'] == 'S') selected @endif>Sí</option>
+            <option value="N" @if($tipoDocumental['SGD_TPR_RADICA'] == 'N') selected @endif>No</option>
+        </select>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Estado</label>
-      <select class="form-select">
-        <option {{ $tipoDocumental['estado'] === 'registrado' ? 'selected' : '' }}>registrado</option>
-        <option {{ $tipoDocumental['estado'] === 'inactivo' ? 'selected' : '' }}>inactivo</option>
-      </select>
+        <label>Estado</label>
+        <select name="estado_id" class="form-select" required>
+            @foreach($estados as $key => $estado)
+                <option value="{{ $key }}" @if($tipoDocumental['estado_id'] == $key) selected @endif>{{ $estado }}</option>
+            @endforeach
+        </select>
     </div>
 
-    <a href="{{ url()->previous() }}" class="btn btn-secondary">Cancelar</a>
-    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-  </form>
-</div>
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+    </form>
 @endsection

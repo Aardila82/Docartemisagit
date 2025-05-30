@@ -86,6 +86,7 @@
                 <th>Númera</th>
                 <th>Radica</th>
                 <th>Estado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -98,6 +99,19 @@
                     <td>{{ $tipo['SGD_TPR_NUMERA'] }}</td>
                     <td>{{ $tipo['SGD_TPR_RADICA'] }}</td>
                     <td>{{ $estados[$tipo['estado_id']] ?? 'Desconocido' }}</td>
+                    <td>
+                    <a href="{{ route('tipos-documentales.edit', $tipo['ID']) }}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <!-- Botón de cambiar estado -->
+    <form action="{{ route('tipos-documentales.cambiar-estado', $tipo['ID']) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('¿Deseas cambiar el estado de este tipo documental?');">
+        @csrf
+        @method('PATCH')
+        <button type="submit" class="btn btn-sm {{ $tipo['estado_id'] == 1 ? 'btn-danger' : 'btn-success' }}">
+            <i class="fas fa-toggle-{{ $tipo['estado_id'] == 1 ? 'off' : 'on' }}"></i>
+        </button>
+    </form>
+                </td>
                 </tr>
             @endforeach
         </tbody>
