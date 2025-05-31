@@ -324,8 +324,7 @@ class SubSerieService
             ];
         }
 
-        $existe = SerieModel::where('codigo', $validated['id_codigo_serie'])->first();
-
+        $existe = SerieModel::where('id', $validated['id_codigo_serie'])->first();
         if (!$existe) {
             return [
                 'data' => [],
