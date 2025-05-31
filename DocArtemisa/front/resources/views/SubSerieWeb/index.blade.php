@@ -12,13 +12,13 @@
   {{-- <a href="{{ route('SerieWeb.masiva') }}" class="btn btn-warning mb-3">Masiva</a> --}}
 
   @if(session()->has('success'))
-  <div class="alert alert-{{ session('success') ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
-    {{ session('message') }}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    Guardado exitoso.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  @endif
+@endif
 
   @if(session('error'))
   <div class="alert alert-danger">
