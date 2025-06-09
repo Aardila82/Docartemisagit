@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\SubSeriesController;
 use App\Http\Controllers\Web\TipoDocumentalController;
 use App\Http\Controllers\Web\SeriesCargueMasivaController;
 use App\Http\Controllers\Web\SubSeriesCargueMasivaController;
+use App\Http\Controllers\Web\LogEventosController;
 
 
 
@@ -52,6 +53,8 @@ Route::post('/tipos-documentales', [TipoDocumentalController::class, 'store'])->
 Route::get('/tipos-documentales/{id}/edit', [TipoDocumentalController::class, 'edit'])->name('tipos-documentales.edit');
 Route::put('/tipos-documentales/{id}', [TipoDocumentalController::class, 'update'])->name('tipos-documentales.update');
 Route::delete('/tipodocumental/cambiar-estado/{id}', [TipoDocumentalController::class, 'cambiarEstado'])->name('tipos-documentales.cambiar-estado');
+
+Route::get('/log-eventos', [LogEventosController::class, 'index'])->name('log_eventos.index');
 
 
 
