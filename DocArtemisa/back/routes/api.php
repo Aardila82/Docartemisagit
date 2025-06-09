@@ -8,6 +8,7 @@ use App\Http\Controllers\API\EstadoControllerApi;
 use App\Http\Controllers\Api\SubSerieVersionControllerApi;
 use App\Http\Controllers\API\SubSeriesCargueMasivaControllerApi;
 use App\Http\Controllers\TipoDocumental\TipoDocumentalController;
+use App\Http\Controllers\LogEvento\LogEventoController;
 
 //=== Procesos para el acta ==========
 Route::get ('/actaAPI',[ActaControllerApi::class, 'index']);
@@ -49,6 +50,10 @@ Route::post('/tipodocumental', [TipoDocumentalController::class, 'store']);
 Route::get('/tipodocumental/{id}', [TipoDocumentalController::class, 'show']);
 Route::put('/tipodocumental/{id}', [TipoDocumentalController::class, 'update']);
 Route::delete('/tipodocumental/{id}', [TipoDocumentalController::class, 'destroy']);
+
+Route::get('log-eventos', [LogEventoController::class, 'index']);
+Route::get('log-eventos/create', [LogEventoController::class, 'create']);
+Route::post('log-eventos', [LogEventoController::class, 'store']);
 
 
 
