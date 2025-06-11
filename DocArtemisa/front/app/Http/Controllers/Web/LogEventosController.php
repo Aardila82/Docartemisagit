@@ -17,6 +17,7 @@ class LogEventosController extends Controller
     public function index()
     {
         $eventos = $this->logEventosService->getAll();
+
         return view('LogEventos.index', compact('eventos'));
     }
 }

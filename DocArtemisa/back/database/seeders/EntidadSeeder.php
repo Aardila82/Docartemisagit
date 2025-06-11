@@ -11,9 +11,9 @@ class EntidadSeeder extends Seeder
     public function run(): void
     {
         DB::table('entidades')->insert([
-            ['nombre' => 'Usuario', 'activo' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['nombre' => 'Rol', 'activo' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['nombre' => 'Permiso', 'activo' => false, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['nombre' => 'Serie', 'activo' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['nombre' => 'SubSerie', 'activo' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+            ['nombre' => 'Tipo Documental', 'activo' => false, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
         ]);
     }
 }
