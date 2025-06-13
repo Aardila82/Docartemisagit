@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\SubSerieVersionControllerApi;
 use App\Http\Controllers\API\SubSeriesCargueMasivaControllerApi;
 use App\Http\Controllers\TipoDocumental\TipoDocumentalController;
 use App\Http\Controllers\LogEvento\LogEventoController;
+use App\Http\Controllers\API\TablaDinamicaController;
 
 //=== Procesos para el acta ==========
 Route::get ('/actaAPI',[ActaControllerApi::class, 'index']);
@@ -54,6 +55,9 @@ Route::delete('/tipodocumental/{id}', [TipoDocumentalController::class, 'destroy
 Route::get('log-eventos', [LogEventoController::class, 'index']);
 Route::get('log-eventos/create', [LogEventoController::class, 'create']);
 Route::post('log-eventos', [LogEventoController::class, 'store']);
+
+Route::post('/crear-tabla', [TablaDinamicaController::class, 'crearTabla']);
+Route::post('/insertar-libro', [TablaDinamicaController::class, 'insertarLibro']);
 
 
 

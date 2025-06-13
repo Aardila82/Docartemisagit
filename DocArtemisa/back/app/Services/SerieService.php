@@ -6,17 +6,31 @@ use App\Models\Serie\SerieModel;
 use Illuminate\Support\Facades\Validator;
 use App\Services\SeriesCargueMasivaService;
 use Illuminate\Support\Facades\File;
+use App\Services\LogEventoService;
+
 
 class SerieService
 {
 
     protected $seriesCargueMasivaService;
+    protected $logEventoService;
+    protected $evento_id_create;
+    protected $evento_id_edit;
+    protected $evento_id_delete;
+    protected $entidad_id;
+    protected $user;
 
 
     public function __construct(
         seriesCargueMasivaService $SeriesCargueMasivaService
     ) {
         $this->seriesCargueMasivaService = $SeriesCargueMasivaService;
+        $this->evento_id_create = 1;
+        $this->evento_id_edit = 2;
+        $this->evento_id_delete = 3;
+        $this->entidad_id = 3;
+        $this->user = "USER";
+
     }
 
 
