@@ -58,6 +58,7 @@ Route::post('log-eventos', [LogEventoController::class, 'store']);
 
 Route::post('/crear-tabla', [TablaDinamicaController::class, 'crearTabla']);
 Route::post('/insertar-libro', [TablaDinamicaController::class, 'insertarLibro']);
+Route::get('/listar-tablas', [TablaDinamicaController::class, 'listarTablas']);
 
 
 

@@ -70,5 +70,17 @@ class TablaDinamicaController extends Controller
         'datos' => $datos
     ]);
 }
+public function listarTablas()
+{
+    $tablas = DB::select("SELECT name FROM sys.tables");
+
+    $nombres = array_map(function ($tabla) {
+        return $tabla->name;
+    }, $tablas);
+
+    return response()->json([
+        'tablas' => $nombres
+    ]);
+}
 
 }
